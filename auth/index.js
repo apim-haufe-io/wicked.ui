@@ -1,5 +1,6 @@
 'use strict';
 
+// Some strange comment for testing
 var express = require('express');
 var passport = require('passport');
 var portalGlobals = require('../portalGlobals');
