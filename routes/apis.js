@@ -318,4 +318,40 @@ router.get('/:api/swagger', cors(corsOptionsDelegate), function (req, res, next)
     }
 }); // /apis/:apiId/swagger
 
+router.get('/:api/apis.json', cors(corsOptionsDelegate), function (req, res, next) {
+    debug("get('/:api/apis.json')");
+    var apiId = req.params.api;
+
+    var apiCallback = function (err, response, body) {
+        if (err)
+            return next(err);
+        if (200 != response.statusCode)
+            return utils.handleError(res, response, body, next);
+
+        try {
+            var apisJson = utils.getJson(body);
+            // Pipe it
+            return res.json(apisJson);
+        } catch (err) {
+            // Hmm...
+            return next(err);
+        }
+    };
+
+    // Let's call the API, it has all the data we need.    
+    var apisjsonUri = '/apis/' + apiId + '/apis.json';
+
+    // Do we have a forUser query parameter?
+    var forUser = req.query.forUser;
+    if (!/^[a-z0-9]+$/.test(forUser)) {
+        debug("get('/:api/apis.json') - invalid forUser used: " + forUser);
+        forUser = null;
+    }
+    if (forUser) {
+        utils.getAsUser(req, apisjsonUri, forUser, apiCallback);
+    } else {
+        utils.get(req, apisjsonUri, apiCallback);
+    }
+}); // /apis/:apiId/swagger
+
 module.exports = router;
