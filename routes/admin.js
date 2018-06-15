@@ -89,6 +89,11 @@ function byName(a, b) {
 
 router.get('/users', function (req, res, next) {
     debug("get('/users')");
+    // This endpoint now also takes the following parameters:
+    //   offset, limit
+    //   filter: URI encoded JSON, e.g. {"name":"michael"}
+    //   order_by: e.g. name%20DESC, or customId%20ASC
+    //   no_cache: 0 or 1, set to 1 to really count the records, otherwise the result may be read from a cache
     utils.getFromAsync(req, res, '/registrations/pools/wicked', 200, function (err, apiResponse) {
         if (err)
             return next(err);
@@ -123,11 +128,19 @@ router.get('/users', function (req, res, next) {
 
 router.get('/applications', function (req, res, next) {
     debug("get('/applications')");
-    // This is not super good; this is expensive. Lots of calls.
     // TODO: This has to be changed to support lazy loading and pagin
     //       We will need an additional end point for Ajax calls; this
     //       call to /applications now supports ?offset=...&limit=...,
     //       and will return an "items" and "count" property.
+    //       By passing the parameter &embed=1, the application data
+    //       is automatically embedded in the response, so there is no
+    //       need to loop over the applications and retrieve the data.
+    //       This HAS to be done server side, otherwise filtering and
+    //       sorting cannot be done sensibly.
+    //
+    // Typical request:
+    // 
+    //       GET /applications?embed=1&filter=...&order_by=name%20ASC&offset=0&limit=20
     utils.getFromAsync(req, res, '/applications', 200, function (err, appsResponse) {
         if (err)
             return next(err);
