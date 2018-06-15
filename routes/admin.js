@@ -22,7 +22,7 @@ router.get('/approvals', function (req, res, next) {
                     authUser: req.user,
                     glob: req.app.portalGlobals,
                     title: 'Pending Subscription Approvals',
-                    approvals: apiResponse
+                    approvals: JSON.stringify(apiResponse)
                 });
         } else {
             res.json({
@@ -115,8 +115,8 @@ router.get('/users', function (req, res, next) {
                     authUser: req.user,
                     glob: req.app.portalGlobals,
                     title: 'All Users',
-                    users: userList
-                });
+                    users: JSON.stringify(userList)
+                 });
         } else {
             res.json({
                 title: 'All Users',
@@ -181,7 +181,7 @@ router.get('/applications', function (req, res, next) {
                         authUser: req.user,
                         glob: req.app.portalGlobals,
                         title: 'All Applications',
-                        applications: appsInfos
+                        applications: JSON.stringify(appsInfos)
                     });
             } else {
                 res.json({
