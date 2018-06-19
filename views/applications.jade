@@ -94,15 +94,3 @@ block content
                                 td
                                     a(href='/applications/#{app.id}')= app.name
                                 td= app.userRole
-
-
-block scripts
-    script(type='text/javascript').
-        alert('sss');
-        $('#desc').on('change keyup paste', function() {
-            var text = $('#desc').val();
-            alert('s'+text);
-            $('#markdown').html(marked(text));
-        });
-        // First time
-        $('#markdown').html(marked($('#appdesc').val()));  
