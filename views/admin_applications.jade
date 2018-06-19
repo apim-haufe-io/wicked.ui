@@ -21,7 +21,7 @@ block bodyScripts
           }
         },
         fields: [
-             { name: "id", type: "text", title: "ID", filtering: false,
+             { name: "id", type: "text", title: "ID", 
                itemTemplate: function(value, item) {
                  return $("<a>").attr("href", "/applications/"+item.id).text(value);
                 }

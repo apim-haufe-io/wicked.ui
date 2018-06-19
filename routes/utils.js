@@ -1,6 +1,7 @@
 'use strict';
 
 const request = require('request');
+const qs = require('querystring');
 const async = require('async');
 const { debug, info, warn, error } = require('portal-env').Logger('portal:utils');
 const fs = require('fs');
@@ -58,22 +59,22 @@ utils.ensureNoSlash = function (url) {
 };
 
 utils.makePagingUri = function (req, uri, filterFields) {
-    var startIndex = (req.query.pageIndex && req.query.pageSize) ?  (req.query.pageIndex - 1) * req.query.pageSize : 0;
-    uri  = uri+ "&offset="+startIndex;
-    uri  = ( req.query.pageSize )  ? uri + "&limit="+req.query.pageSize : uri;
-    uri  = ( req.query.sortField ) ? uri +"&order_by="+req.query.sortField+"%20"+req.query.sortOrder.toUpperCase() : uri;
-    uri  = ( req.query.pageIndex && (startIndex==0) )  ? uri + "&no_cache=1": uri;
+    const startIndex = (req.query.pageIndex && req.query.pageSize) ? (req.query.pageIndex - 1) * req.query.pageSize : 0;
+    uri = (uri && uri.indexOf('?') < 0) ? `${uri}?` : uri;
+    uri = `${uri}&offset=${startIndex}`;
+    uri = (req.query.pageSize) ? `${uri}&limit=${req.query.pageSize}` : uri;
+    uri = (req.query.sortField) ? `${uri}&order_by=${req.query.sortField}%20${req.query.sortOrder}` : uri;
+    uri = (startIndex == 0) ? `${uri}&no_cache=1` : uri;
     var filterParams = {};
     var hasFilter = false;
     for (let i = 0; i < filterFields.length; ++i) {
-      var field = filterFields[i];
-      if(req.query[field]){
-        filterParams[field] = req.query[field];
-        hasFilter = true;
-      }
+        var field = filterFields[i];
+        if (req.query[field]) {
+            filterParams[field] = req.query[field];
+            hasFilter = true;
+        }
     }
-    uri  = (hasFilter)  ? uri + "&filter="+encodeURIComponent(utils.getText(filterParams)) : uri;
-    return uri;
+    return (hasFilter) ? `${uri}&filter=${qs.escape(utils.getText(filterParams))}` : uri;
 };
 
 function makeHeaders(req, userId) {

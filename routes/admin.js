@@ -20,7 +20,7 @@ router.get('/approvals', function (req, res, next) {
             res.render('admin_approvals',
                 {
                     authUser: req.user,
-                    glob: req.app.portalGlobals,
+                    glob: req.app.portalGlobals, 
                     title: 'Pending Subscription Approvals',
                     approvals: JSON.stringify(apiResponse)
                 });
@@ -89,32 +89,21 @@ function byName(a, b) {
 
 router.get('/users', function (req, res, next) {
     debug("get('/users')");
-    // This endpoint now also takes the following parameters:
-    //   offset, limit
-    //   filter: URI encoded JSON, e.g. {"name":"michael"}
-    //   order_by: e.g. name%20DESC, or customId%20ASC
-    //   no_cache: 0 or 1, set to 1 to really count the records, otherwise the result may be read from a cache
-    var filterFields  = ['id','name','email'];
-    var usersUri = utils.makePagingUri(req, '/registrations/pools/wicked?embed=1',filterFields);
-
+    if (!utils.acceptJson(req)) {
+        res.render('admin_users',
+            {
+                authUser: req.user,
+                glob: req.app.portalGlobals,
+                title: 'All Users',
+            });
+        return;    
+    }
+    const filterFields = ['id', 'name', 'email'];
+    const usersUri = utils.makePagingUri(req, '/registrations/pools/wicked', filterFields);
     utils.getFromAsync(req, res, usersUri, 200, function (err, apiResponse) {
         if (err)
             return next(err);
-        // apiResponse looks like this:
-        // {
-        //   items: [...],
-        //   count: <# records in total>
-        //   count_cached: true/false
-        // }
-        if (!utils.acceptJson(req)) {
-            res.render('admin_users',
-                {
-                    authUser: req.user,
-                    glob: req.app.portalGlobals,
-                    title: 'All Users',
-                    users: apiResponse
-                 });
-        } else {
+        if (utils.acceptJson(req)) {
             res.json({
                 title: 'All Users',
                 users: apiResponse
@@ -125,40 +114,27 @@ router.get('/users', function (req, res, next) {
 
 router.get('/applications', function (req, res, next) {
     debug("get('/applications')");
-    // TODO: This has to be changed to support lazy loading and pagin
-    //       We will need an additional end point for Ajax calls; this
-    //       call to /applications now supports ?offset=...&limit=...,
-    //       and will return an "items" and "count" property.
-    //       By passing the parameter &embed=1, the application data
-    //       is automatically embedded in the response, so there is no
-    //       need to loop over the applications and retrieve the data.
-    //       This HAS to be done server side, otherwise filtering and
-    //       sorting cannot be done sensibly.
-    //
-    // Typical request:
-    //
-    //       GET /applications?embed=1&filter=...&order_by=name%20ASC&offset=0&limit=20
-    var filterFields  = ['id','name','ownerEmail'];
-    var appsUri = utils.makePagingUri(req, '/applications?embed=1',filterFields);
-    //sortField=id&sortOrder=asc
+    if (!utils.acceptJson(req)) {
+        res.render('admin_applications', {
+            authUser: req.user,
+            glob: req.app.portalGlobals,
+            title: 'All Applications',
+        });
+        return;
+    }
+    const filterFields = ['id', 'name', 'ownerEmail'];
+    const appsUri = utils.makePagingUri(req, '/applications?embed=1', filterFields);
     utils.getFromAsync(req, res, appsUri, 200, function (err, appsResponse) {
         if (err)
             return next(err);
-        if (!utils.acceptJson(req)) {
-            res.render('admin_applications',{
-              authUser: req.user,
-              glob: req.app.portalGlobals,
-              title: 'All Applications',
-              applications: appsResponse,
+        if (utils.acceptJson(req)) {
+            res.json({
+                title: 'All Applications',
+                applications: appsResponse
             });
-         } else {
-           res.json({
-             title: 'All Applications',
-             applications: appsResponse
-           });
         }
-      });
-   });
+    });
+});
 
 router.get('/subscribe', function (req, res, next) {
     debug("get('/subscribe')");
