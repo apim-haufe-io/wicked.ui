@@ -94,7 +94,10 @@ router.get('/users', function (req, res, next) {
     //   filter: URI encoded JSON, e.g. {"name":"michael"}
     //   order_by: e.g. name%20DESC, or customId%20ASC
     //   no_cache: 0 or 1, set to 1 to really count the records, otherwise the result may be read from a cache
-    utils.getFromAsync(req, res, '/registrations/pools/wicked', 200, function (err, apiResponse) {
+    var filterFields  = ['id','name','email'];
+    var usersUri = utils.makePagingUri(req, '/registrations/pools/wicked?embed=1',filterFields);
+
+    utils.getFromAsync(req, res, usersUri, 200, function (err, apiResponse) {
         if (err)
             return next(err);
         // apiResponse looks like this:
@@ -103,24 +106,18 @@ router.get('/users', function (req, res, next) {
         //   count: <# records in total>
         //   count_cached: true/false
         // }
-        const userList = apiResponse.items;
-        debug(userList);
-
-        // Sort by name
-        userList.sort(byName);
-
         if (!utils.acceptJson(req)) {
             res.render('admin_users',
                 {
                     authUser: req.user,
                     glob: req.app.portalGlobals,
                     title: 'All Users',
-                    users: JSON.stringify(userList)
+                    users: apiResponse
                  });
         } else {
             res.json({
                 title: 'All Users',
-                users: userList
+                users: apiResponse
             });
         }
     });
@@ -139,59 +136,29 @@ router.get('/applications', function (req, res, next) {
     //       sorting cannot be done sensibly.
     //
     // Typical request:
-    // 
+    //
     //       GET /applications?embed=1&filter=...&order_by=name%20ASC&offset=0&limit=20
-    utils.getFromAsync(req, res, '/applications', 200, function (err, appsResponse) {
+    var filterFields  = ['id','name','ownerEmail'];
+    var appsUri = utils.makePagingUri(req, '/applications?embed=1',filterFields);
+    //sortField=id&sortOrder=asc
+    utils.getFromAsync(req, res, appsUri, 200, function (err, appsResponse) {
         if (err)
             return next(err);
-        // appsResponse: {
-        //   items: [...],
-        //   count: _n_
-        //   count_cached: true/false
-        // }
-        const appIds = [];
-        for (let i = 0; i < appsResponse.items.length; ++i)
-            appIds.push(appsResponse.items[i].id);
-
-        // This is the expensive part:
-        async.map(appIds, function (appId, callback) {
-            utils.getFromAsync(req, res, '/applications/' + appId, 200, callback);
-        }, function (err, appsInfos) {
-            if (err)
-                return next(err);
-            for (let i = 0; i < appsInfos.length; ++i) {
-                const thisApp = appsInfos[i];
-                let mainOwner = null;
-                for (let j = 0; j < thisApp.owners.length; ++i) {
-                    if ("owner" == thisApp.owners[j].role) {
-                        mainOwner = thisApp.owners[j];
-                        break;
-                    }
-                }
-                if (mainOwner)
-                    thisApp.mainOwner = mainOwner;
-            }
-
-            // Sort by Application name
-            appsInfos.sort(byName);
-
-            if (!utils.acceptJson(req)) {
-                res.render('admin_applications',
-                    {
-                        authUser: req.user,
-                        glob: req.app.portalGlobals,
-                        title: 'All Applications',
-                        applications: JSON.stringify(appsInfos)
-                    });
-            } else {
-                res.json({
-                    title: 'All Applications',
-                    applications: appsInfos
-                });
-            }
-        });
-    });
-});
+        if (!utils.acceptJson(req)) {
+            res.render('admin_applications',{
+              authUser: req.user,
+              glob: req.app.portalGlobals,
+              title: 'All Applications',
+              applications: appsResponse,
+            });
+         } else {
+           res.json({
+             title: 'All Applications',
+             applications: appsResponse
+           });
+        }
+      });
+   });
 
 router.get('/subscribe', function (req, res, next) {
     debug("get('/subscribe')");

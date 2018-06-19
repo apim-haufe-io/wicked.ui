@@ -3,42 +3,34 @@ block bodyScripts
   script(type='text/javascript').
     $(document).ready(function(){
        $('#applicationsGrid').jsGrid({
-         width: "100%", pageSize: 5, sorting: true, paging: true, filtering: true, pageLoading:true, autoload: true,
+         width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, pageLoading:true, autoload: true,
          controller: {
           loadData: function (filter) {
             var d = $.Deferred();
-            console.log(filter);
-            console.log("/applications?embed=1&offset="+(filter.pageIndex-1)+"&limit="+filter.pageSize);
         		$.ajax({
-                type: "GET",
-                url: "/applications?no_cache=1&offset="+(filter.pageIndex-1)+"&limit="+filter.pageSize,
+                url: "/admin/applications",
+                data: filter,
                 dataType: "json"
               }).done(function(result) {
-                //console.log(JSON.stringify(result));
                 d.resolve({
-                    data: result.applications,
-                    itemsCount: result.count
+                    data: result.applications.items,
+                    itemsCount: result.applications.count
                 });
               });
               return d.promise();
           }
         },
         fields: [
-             { name: "id", type: "text", title: "ID",
+             { name: "id", type: "text", title: "ID", filtering: false,
                itemTemplate: function(value, item) {
                  return $("<a>").attr("href", "/applications/"+item.id).text(value);
                 }
              },
              { name: "name", type: "text", title: "Name" },
-             { name: "email", type: "text", title: "Owner",
-               itemTemplate: function(value, items) {
-                   var col = $("<td>");
-                    $.each(items.owners, function (i, item) {
-                      $(col).append($("<a>").attr("href", "/users/"+item.userId).text(item.email))
-                             .append("&nbsp;");
-                   });
-                 return col;
-                }
+             { name: "ownerEmail", type: "text", title: "Owner",
+               itemTemplate: function(value, item) {
+                  return $("<a>").attr("href", "/users/"+item.ownerUserId).text(value);
+               }
              },
              { type: "control", width: "10", editButton: false, deleteButton: false,
                _createFilterSwitchButton: function() {

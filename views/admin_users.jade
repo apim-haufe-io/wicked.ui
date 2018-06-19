@@ -3,32 +3,32 @@ block bodyScripts
     script(type='text/javascript').
         $(document).ready(function(){
            $('#usersGrid').jsGrid({
-             width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, autoload: true,
-             controller: {
-              loadData: function (filter) {
-                  var d = $.Deferred();
-                  var data = !{users};
-                  if (isEmptyGridFilter(filter)) {
-                    d.resolve(data);
-                    return d.promise();
-                  }
-                  data = $.grep(data, function (item) {
-                    if (applyGridFilter(filter, item))
-                       return item;
+           width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, pageLoading:true, autoload: true,
+           controller: {
+            loadData: function (filter) {
+              var d = $.Deferred();
+          		$.ajax({
+                  url: "/admin/users",
+                  data: filter,
+                  dataType: "json"
+                }).done(function(result) {
+                  d.resolve({
+                      data: result.users.items,
+                      itemsCount: result.users.count
                   });
-                  d.resolve(data);
-                  return d.promise();
-              }
+                });
+                return d.promise();
+             }
             },
             fields: [
-                 { name: "id", type: "text", title: "ID" },
+                 { name: "id", type: "text", title: "ID" , width: "12%"},
                  { name: "name", type: "text", title: "Name",
                    itemTemplate: function(value, item) {
                      return $("<a>").attr("href", "/users/"+item.id).text(value);
                     }
                  },
                  { name: "email", type: "text", title: "Email"},
-                 { name: "customId", type: "text", title: "Custom ID",
+                 { name: "customId", type: "text", title: "Custom ID", filtering: false,
                    itemTemplate: function(value, item) {
                      return (value) ? value : "---";
                     }
