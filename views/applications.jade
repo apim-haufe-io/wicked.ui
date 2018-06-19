@@ -1,5 +1,17 @@
 extends layout
+block scripts
+    script(src='/assets/marked/marked.min.js')
 
+    script(type='text/javascript').
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#desc').on('change keyup paste', function() {
+                var text = $('#desc').val();
+                $('#markdown').html(marked(text));
+            });
+            // First time
+            $('#markdown').html(marked($('#desc').val()));      
+         });
+       
 block content
     .jumbotron.wicked-application-title
         .container.wicked-title-container
@@ -41,8 +53,9 @@ block content
                                     small A human readable description/name of the your application, e.g. 'My Awesome Application'
                                 .form-group
                                     label(for='appdesc') Application Description:
-                                    input(type='string' name='appdesc').form-control
+                                    textarea(name='appdesc' id='desc' style='height:100px').form-control= appdesc
                                     small The Application Description field can be used to provide additional details about your application use case, including any relevant URLs. If you are subscribing to an API that requires approvals, completing this field will aid in processing time
+                                    div(id='markdown')
                                 .checkbox
                                     label
                                         input(type='checkbox' name='hasredirecturi' data-toggle='collapse' data-target='#redirecturipanel')
@@ -81,3 +94,15 @@ block content
                                 td
                                     a(href='/applications/#{app.id}')= app.name
                                 td= app.userRole
+
+
+block scripts
+    script(type='text/javascript').
+        alert('sss');
+        $('#desc').on('change keyup paste', function() {
+            var text = $('#desc').val();
+            alert('s'+text);
+            $('#markdown').html(marked(text));
+        });
+        // First time
+        $('#markdown').html(marked($('#appdesc').val()));  

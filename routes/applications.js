@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var marked = require('marked');
 var router = express.Router();
 var async = require('async');
 var { debug, info, warn, error } = require('portal-env').Logger('portal:applications');
@@ -148,7 +149,7 @@ router.post('/register', function (req, res, next) {
     };
 
     if(appDesc)
-        newApp.description = appDesc;
+        newApp.description = marked(appDesc);
     if (hasRedirectUri)
         newApp.redirectUri = redirectUri;
 
