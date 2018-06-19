@@ -65,6 +65,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use('/assets/jquery', express.static(path.join(__dirname, 'node_modules/jquery/dist')));
 app.use('/assets/jsgrid', express.static(path.join(__dirname, 'node_modules/jsgrid/dist')));
+app.use('/assets/highlight', express.static(path.join(__dirname, 'node_modules/highlight.js/lib')));
 
 // Initializing state
 app.use('/ping', ping);
