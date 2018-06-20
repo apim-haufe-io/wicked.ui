@@ -99,7 +99,8 @@ router.get('/', function (req, res, next) {
                     authUser: req.user,
                     glob: req.app.portalGlobals,
                     route: '/applications',
-                    applications: appInfos,
+                    count: appInfos.length,
+                    applications: JSON.stringify(appInfos),
                     showRegister: showRegister
                 });
             } else {
