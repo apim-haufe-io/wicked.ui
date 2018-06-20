@@ -50,7 +50,6 @@ block bodyScripts
       
             $('#applicationsGrid').jsGrid({
                 width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, autoload: true,
-                data: !{applications},
                 controller: {
                     loadData: function (filter) {
                         var d = $.Deferred();

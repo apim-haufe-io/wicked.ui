@@ -219,7 +219,7 @@ router.get('/verifications', function (req, res, next) {
                 authUser: req.user,
                 glob: req.app.portalGlobals,
                 title: 'Pending Verifications',
-                verifications: verifResponse
+                verifications: JSON.stringify(verifResponse)
             });
         } else {
             res.json({
