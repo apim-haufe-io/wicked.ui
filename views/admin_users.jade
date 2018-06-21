@@ -21,10 +21,10 @@ block bodyScripts
              }
             },
             fields: [
-                 { name: "id", type: "text", title: "ID" , width: "12%"},
+                 { name: "userId", type: "text", title: "User ID" , width: "12%"},
                  { name: "name", type: "text", title: "Name",
                    itemTemplate: function(value, item) {
-                     return $("<a>").attr("href", "/users/"+item.id).text(value);
+                     return $("<a>").attr("href", "/users/" + item.userId).text(value);
                     }
                  },
                  { name: "email", type: "text", title: "Email"},
