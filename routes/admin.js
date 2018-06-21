@@ -87,7 +87,17 @@ function byName(a, b) {
     return a.name < b.name ? -1 : 1;
 }
 
-router.get('/users', function (req, res, next) {
+function mustBeAdminMiddleware(req, res, next) {
+    const loggedInUserId = utils.getLoggedInUserId(req);
+    if (!loggedInUserId)
+        return utils.fail(403, 'You must be logged in to view this page.', next);
+    if (!req.user.admin)
+        return utils.fail(403, 'Only Admins can view this page. If you need access, contact your site administrator.', next);
+    
+    return next();
+}
+
+router.get('/users', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/users')");
     if (!utils.acceptJson(req)) {
         res.render('admin_users',
@@ -112,7 +122,7 @@ router.get('/users', function (req, res, next) {
     });
 });
 
-router.get('/applications', function (req, res, next) {
+router.get('/applications', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/applications')");
     if (!utils.acceptJson(req)) {
         res.render('admin_applications', {
@@ -136,7 +146,7 @@ router.get('/applications', function (req, res, next) {
     });
 });
 
-router.get('/subscribe', function (req, res, next) {
+router.get('/subscribe', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/subscribe')");
     async.parallel({
         getApplications: function (callback) {
@@ -162,7 +172,7 @@ router.get('/subscribe', function (req, res, next) {
     });
 });
 
-router.get('/listeners', function (req, res, next) {
+router.get('/listeners', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/listeners')");
     utils.getFromAsync(req, res, '/webhooks/listeners', 200, function (err, appsResponse) {
         if (err)
@@ -183,7 +193,7 @@ router.get('/listeners', function (req, res, next) {
     });
 });
 
-router.get('/listeners/:listenerId', function (req, res, next) {
+router.get('/listeners/:listenerId', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/listeners/:listenerId')");
     const listenerId = req.params.listenerId;
     const regex = /^[a-zA-Z0-9\-_]+$/;
@@ -208,7 +218,7 @@ router.get('/listeners/:listenerId', function (req, res, next) {
     });
 });
 
-router.get('/verifications', function (req, res, next) {
+router.get('/verifications', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/verifications'");
     utils.getFromAsync(req, res, '/verifications', 200, function (err, verifResponse) {
         if (err)
@@ -227,6 +237,32 @@ router.get('/verifications', function (req, res, next) {
                 verifications: verifResponse
             });
         }
+    });
+});
+
+router.post('/verifications/:verificationId', mustBeAdminMiddleware, function (req, res, next) {
+    const verificationId = req.params.verificationId;
+    utils.delete(req, `/verifications/${verificationId}`, (err, apiResponse, apiBody) => {
+        if (err) {
+            error(err);
+            return res.json({
+                success: false,
+                message: err.message
+            });
+        }
+        if (apiResponse.statusCode >= 200 && apiResponse.statusCode < 300) {
+            return res.json({
+                success: true,
+                message: 'Successfully deleted verification.'
+            });
+        }
+        warn(`Delete verification: Failed with status code ${apiResponse.statusCode}, API returns:`);
+        warn(apiBody);
+        return res.json({
+            success: false,
+            message: `Unexpected status code ${apiResponse.statusCode}.`,
+            response: apiBody
+        });
     });
 });
 
@@ -257,7 +293,7 @@ function fixUptimes(healths) {
     }
 }
 
-router.get('/health', function (req, res, next) {
+router.get('/health', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/health')");
     utils.getFromAsync(req, res, '/systemhealth', 200, function (err, healthResponse) {
         if (err)
@@ -279,7 +315,7 @@ router.get('/health', function (req, res, next) {
     });
 });
 
-router.get('/apis/:apiId/subscriptions_csv', function (req, res, next) {
+router.get('/apis/:apiId/subscriptions_csv', mustBeAdminMiddleware, function (req, res, next) {
     const apiId = req.params.apiId;
     debug("get('/apis/" + apiId + "/subscriptions_csv')");
     utils.getFromAsync(req, res, '/apis/' + apiId + '/subscriptions', 200, function (err, applicationList) {
@@ -329,7 +365,7 @@ router.get('/apis/:apiId/subscriptions_csv', function (req, res, next) {
     });
 });
 
-router.post('/apis/:apiId/delete_subscriptions', function (req, res, next) {
+router.post('/apis/:apiId/delete_subscriptions', mustBeAdminMiddleware, function (req, res, next) {
     // This thing could use CSRF
     const apiId = req.params.apiId;
     debug("post('/apis/" + apiId + "/delete_subscriptions')");

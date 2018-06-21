@@ -1,6 +1,18 @@
 extends layout
 block bodyScripts
     script(type='text/javascript').
+        function deleteVerification(item) {
+          if (confirm('Really delete verification?')) {
+            $.post('/admin/verifications/' + item.id, {}, function (data, status) {
+              if (data.success) {
+                $('#verificationsGrid').jsGrid("deleteItem", item);
+              } else {
+                alert('Deleting verification failed: ' + data.message);
+              }
+            });
+          }
+        }
+
         $(document).ready(function(){
            $('#verificationsGrid').jsGrid({
              width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, autoload: true,
@@ -20,6 +32,7 @@ block bodyScripts
                   return d.promise();
               }
             },
+            confirmDeleting: false,
             fields: [
                  { name: "id", type: "text", title: "ID",
                    itemTemplate: function(value, item) {
@@ -51,6 +64,7 @@ block bodyScripts
                                                          .attr("class", "btn btn-sm btn-danger")
                                                          .text("Delete")
                                                          .on("click", function () {
+                                                           deleteVerification(item);
                                                          });
                           return $("<td nowrap>").append($deleteBtn);
                        }

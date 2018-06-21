@@ -443,7 +443,7 @@ utils.getFromAsync = function (req, res, uri, expectedStatus, callback) {
     utils.get(req, uri, function (err, apiResponse, apiBody) {
         if (err)
             return callback(err);
-        if (expectedStatus != apiResponse.statusCode)
+        if (expectedStatus !== apiResponse.statusCode)
             return utils.handleError(res, apiResponse, apiBody, callback);
         const contentType = apiResponse.headers['content-type'];
         let returnValue = null;
