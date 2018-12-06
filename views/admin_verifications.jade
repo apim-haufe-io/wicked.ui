@@ -41,15 +41,15 @@ block bodyScripts
                                     .text(value);
                     }
                  },
-                 { name: "type", type: "text", title: "Type", width: "3%"},
-                 { name: "email", type: "text", title: "Email", width: "10%"},
+                 { name: "type", type: "text", title: "Type", width: "8%"},
+                 { name: "email", type: "text", title: "Email", width: "20%"},
                  { name: "userId", type: "text", title: "User ID",
                    itemTemplate: function(value, item) {
                      return $("<a>").attr("href", "/users/"+item.userId)
                                     .text(value);
                     }
                  },
-                 { name: "utc", type: "text", title: "Timestamp",  width: "6%",
+                 { name: "utc", type: "text", title: "Timestamp",  width: "12%",
                    itemTemplate: function(value, item) {
                      return new Date(value * 1000).toLocaleString();
                     }
@@ -75,7 +75,7 @@ block bodyScripts
         });
 
 block content
-    .jumbotron.wicked-admin-title
+    .jumbotron.wicked-admin-title.mt-5
         .container.wicked-title-container
             h1= title
             

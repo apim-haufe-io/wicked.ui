@@ -15,7 +15,7 @@ block scripts
     }
 
 block content
-  .jumbotron.wicked-application-title
+  .jumbotron.wicked-application-title.mt-5
     .container.wicked-title-container
       h1 Allowed Scope
       
@@ -61,24 +61,24 @@ block content
         - var initialStyle = subscription.allowedScopesMode == 'select' ? null : 'display:none'
 
         div
-          div(id='scopes' style=initialStyle).panel.panel-default
-            .panel-heading
+          div(id='scopes' style=initialStyle).card.border
+            .card-header
               +panelTitle('Allowed Scopes', null, '#allowed_scopes')
-            #allowed_scopes.collapse.panel-collapse.in
-              .panel-body
+            #allowed_scopes.collapse.show
+              .card-body
                 if api.settings && api.settings.scopes
                   for scope, key in api.settings.scopes
                     - var isChecked = subscription.allowedScopes.find(s => s == key) ? true : false
-                    .checkbox
-                      label
-                        input(type='checkbox' name='scope' value=key checked=isChecked disabled=readOnly)
+                    .form-group.form-check
+                      input(type='checkbox' class="form-check-input" name='scope' value=key checked=isChecked disabled=readOnly)
+                      label.form-check-label
                         | <b>#{scope.description}</b> (#{key})
                 else
                   i The selected API does not have any defined scopes.
 
         if readOnly
           p
-            a(href='/applications/#{application.id}').btn.btn-default Back to application
+            a(href='/applications/#{application.id}').btn.btn-light.border Back to application
         else
           p
             button.btn.btn-success Save

@@ -3,7 +3,7 @@ extends layout
 block content
   - var tocPointers = [];
   .jumbotron.wicked-content-title
-    .container.wicked-title-container
+    .container.wicked-title-container.mt-5
         h1= title
         if subTitle
             != subTitle
@@ -24,11 +24,11 @@ block content
 
     if (toc)
       each cat, name in toc
-        .panel.panel-default
-          .panel-heading
-            h4.panel-title= cat.name
-          .panel-body
-            ul
+        .card.border.mb-3
+          .card-header
+            h4.card-title.mb-0= cat.name
+          .card-body
+            ul.mb-0
               each entry in cat.entries
                 li
                   a(href=entry.url)= entry.title

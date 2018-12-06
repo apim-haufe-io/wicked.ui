@@ -19,7 +19,7 @@ block scripts
         });
 
 block content
-    .jumbotron.wicked-application-title
+    .jumbotron.wicked-application-title.mt-5
         .container.wicked-title-container
             h1= application.name
             
@@ -30,15 +30,15 @@ block content
 
 
     .container.wicked-container
-        .panel.panel-default
-            .panel-heading
+        .card.border.mb-3
+            .card-header
                 +panelTitle('Subscriptions', '/help/application')
-            .panel-body
+            .card-body
                 if subscriptions.length == 0
                     p.
                         Your application does not have any API subscriptions currently. You may add
                         subscriptions on the API pages. 
-                    a(href='/apis').btn.btn-default View APIs &raquo;
+                    a(href='/apis').btn.btn-light.border View APIs &raquo;
                 else
                     p.
                         Your application has the following API subscriptions:
@@ -72,11 +72,11 @@ block content
                                         td(style='vertical-align: middle;' colspan=2)
                                             i Subscription approval is pending
 
-        .panel.panel-default
-            .panel-heading
+        .card.border.mb-3
+            .card-header
                 +panelTitle('Application Info', '/help/application', '#applicationinfo')
-            #applicationinfo.collapse.panel-collapse
-                .panel-body
+            #applicationinfo.collapse
+                .card-body
                     if application._links.patchApplication
 
                         form(role='form' action='/applications/#{application.id}/patch' method='post')
@@ -98,14 +98,14 @@ block content
                                     The callback under which your web application can be called back, passing the access token in the fragment.
                                     Check the documentation for a <a href="https://github.com/Haufe-Lexware/wicked.haufe.io/blob/master/doc/valid-redirect-uris.md" target="_blank">list of valid redirect URIs</a>.
 
-                            .checkbox
-                                label
-                                    if application.confidential
-                                        input(type='checkbox' name='confidential' checked)
-                                    else
-                                        input(type='checkbox' name='confidential')
+                            .form-group.form-check
+                                if application.confidential
+                                    input(type='checkbox' class='form-check-input' name='confidential' checked)
+                                else
+                                    input(type='checkbox' class='form-check-input' name='confidential')
+                                label.form-check-label
                                     strong This application is able to store a client secret confidentially (server side).
-                            br
+
                             button(style='display:inline;' class='btn btn-warning' type='submit') Update
                     else
                         p.
@@ -114,14 +114,14 @@ block content
                         if application.redirectUri
                             input(type='string' value=application.redirectUri readonly).form-control
 
-        .panel.panel-default
-            .panel-heading
+        .card.border.mb-3
+            .card-header
                 +panelTitle('Owners', '/help/application-ownership', '#ownerpanel')
-            div(id='ownerpanel').collapse.panel-collapse
-                .panel-body
+            div(id='ownerpanel').collapse
+                .card-body
                     p.
                         These are the application owners:
-                    table.table.table-striped
+                    table.table.table-striped.table-bordered
                         thead
                             tr
                                 th Owner
@@ -140,44 +140,43 @@ block content
                                         if owner._links.deleteOwner
                                             form(style='display:inline;' role='form' action='/applications/#{application.id}/owners/delete' method='post')
                                                 input(type='hidden' value='#{owner.email}' name='owneremail')
-                                                button(class='btn btn-default btn-warning' type='submit') Remove &raquo;
+                                                button(class='btn btn-warning' type='submit') Remove &raquo;
                                         else
                                             span &nbsp;
 
                     if application._links.addOwner
                         if application.owners.length == 1
                             p If you want to transfer ownership of the application, add a new owner, and then (if needed), remove yourself from the list of owners.
-                        .panel-group
-                            div(class='panel panel-default')
-                                .panel-heading
-                                    h4.panel-title
-                                        a(data-toggle='collapse' href='#collapse') Register Additional Owner
-                                div(id='collapse' class='panel-collapse collapse')
-                                    .panel-body
-                                        form(role='form' action='/applications/#{application.id}/owners/add' method='post')
-                                            .form-group
-                                                label(for='owneremail') Owner Email:
-                                                input(type='email' name='owneremail').form-control
-                                                p 
-                                                    small Additional owners must already be registered with this API Portal.
-                                            label(for='ownerrole') Owner Role:
-                                            select(name='ownerrole').form-control
-                                                for role in roles
-                                                    option(value='#{role.role}')= role.desc
+                        div(class='card border')
+                            .card-header
+                                h5.card-title.mb-0
+                                    a(data-toggle='collapse' href='#collapse') Register Additional Owner
+                            div(id='collapse' class='collapse')
+                                .card-body
+                                    form(role='form' action='/applications/#{application.id}/owners/add' method='post')
+                                        .form-group
+                                            label(for='owneremail') Owner Email:
+                                            input(type='email' name='owneremail').form-control
                                             p
-                                                small If the added owner is member of an admin group, he will have owner access to the application regardless of the role you assign.
-                                            p
-                                                button(class='btn btn-primary' type='submit') Register Co-Owner &raquo;
+                                                small Additional owners must already be registered with this API Portal.
+                                        label(for='ownerrole') Owner Role:
+                                        select(name='ownerrole').form-control
+                                            for role in roles
+                                                option(value='#{role.role}')= role.desc
+                                        p
+                                            small If the added owner is member of an admin group, he will have owner access to the application regardless of the role you assign.
+                                        p
+                                            button(class='btn btn-primary' type='submit') Register Co-Owner &raquo;
                     else
                         i Only owners and admins may add and delete owners.                        
         
         if application._links.deleteApplication
-            .panel.panel-danger
-                .panel-heading
-                    h5.panel-title
+            .card.border-danger
+                .card-header.bg-danger.text-white
+                    h5.card-title.mb-0
                         a(data-toggle='collapse' data-target='#dangerzone') Danger Zone
-                div(id='dangerzone').collapse.panel-collapse
-                    .panel-body
+                div(id='dangerzone').collapse
+                    .card-body
                         p.
                             If you do not need this application anymore, you can unregister it completely.
                             Please note that this operation is not undoable, and that unregistering an

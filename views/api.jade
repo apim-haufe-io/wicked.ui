@@ -19,7 +19,7 @@ block bodyScripts
         });
 
 block content
-    .jumbotron.wicked-api-title
+    .jumbotron.wicked-api-title.mt-5
         .container.wicked-title-container
             .row
                 .col-md-8
@@ -35,19 +35,19 @@ block content
     .container.wicked-container
 
         if apiInfo.deprecated
-            .panel.panel-danger
-                .panel-heading
-                    h4.panel-title API deprecated
-                .panel-body
+            .card.bg-danger.text-white
+                .card-header
+                    h4.card-title API deprecated
+                .card-body
                     p.
                         This API has been deprecated by the API Portal maintainers. This means it can no longer be subscribed to.
                         Existing subscriptions are still valid.
 
         if authUser || !apiInfo.requiredGroup                  
-            .panel.panel-default
-                .panel-heading
+            .card.border.mb-3
+                .card-header
                     +panelTitle('API Settings', '/help/api')
-                .panel-body
+                .card-body
                     if apiUris.length > 1
                         label API URLs:
                     else
@@ -73,11 +73,11 @@ block content
                             br
                    
                         for authMethod in apiInfo.authMethods
-                            .panel.panel-success
-                                .panel-heading
+                            .card.border-success.mb-2
+                                .card-header.bg-success.text-white
                                     +panelTitle(authMethod.friendlyShort + ' (' + authMethod.name + ')', null, '#auth_' + authMethod.name)
-                                div(id='auth_#{authMethod.name}').collapse.panel-collapse
-                                    .panel-body
+                                div(id='auth_#{authMethod.name}').collapse
+                                    .card-body
                                         p #{authMethod.friendlyLong}
                                         if authMethod.config.authorizeEndpoint && !onlyClientCredentials
                                             input(readonly type='string' value=authMethod.config.authorizeEndpoint style='font-family: monospace;').form-control
@@ -111,31 +111,31 @@ block content
                             This API is part of the API Bundle "#{apiInfo.bundle}". Read more on API Bundles on the <a href="/help/bundles">API Bundle help page</a>.
                             Tokens created for any of the bundled APIs can be reused with <a href="/apis">any other API</a> of the same API bundle.
 
-        .panel.panel-default
-            .panel-heading
+        .card.border.mb-3
+            .card-header
                 +panelTitle('Description', '/help/api', '#apidescription')
-            #apidescription.collapse.panel-collapse.in
-                .panel-body
+            #apidescription.collapse.show
+                .card-body
                     != apiDesc
 
-                    a(href="#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?url=#{encodeURIComponent(genericSwaggerUrl)}" role="button" target="_blank").btn.btn-default View Swagger definition &raquo;
+                    a(href="#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?url=#{encodeURIComponent(genericSwaggerUrl)}" role="button" target="_blank").btn.btn-light.border View Swagger definition &raquo;
         
         if !authUser
-            .panel.panel-danger
-                .panel-heading
-                    h4.panel-title Not logged in
-                .panel-body
+            .card.bg-danger.text-white
+                .card-header
+                    h4.card-title Not logged in
+                .card-body
                     p.
                         You are currently not logged in, so we can't display your registered applications.
                         Please log in first.
                     p                    
-                        a(href="/login?redirect=/apis/#{apiInfo.id}").btn.btn-default Log in &raquo;
+                        a(href="/login?redirect=/apis/#{apiInfo.id}").btn.btn-light.border Log in &raquo;
 
         else
-            .panel.panel-default
-                .panel-heading
+            .card.border.mb-3
+                .card-header
                     +panelTitle('Applications', '/help/api')
-                .panel-body
+                .card-body
 
                     -var redirectAuth = apiInfo.auth == "oauth2" && apiInfo.settings && (apiInfo.settings.enable_implicit_grant || apiInfo.settings.enable_authorization_code)
                     -var directAuth = apiInfo.auth == "oauth2" && apiInfo.settings && (apiInfo.settings.enable_client_credentials || apiInfo.settings.enable_password_grant)
@@ -161,7 +161,7 @@ block content
                     if applications.length == 0
                         p You do not have any registered applications yet. Please create an application first.
                     else
-                        table.table.table-striped
+                        table.table.table-striped.table-bordered
                             thead
                                 tr
                                     th Application
@@ -227,13 +227,13 @@ block content
                                         if app.hasSubscription && app.subscriptionApproved
                                             td
                                                 if apiInfo.auth == "key-auth"
-                                                    a(href='#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?apikey=#{app.apiKey}&url=#{app.swaggerLink}' target='_blank').btn.btn-default Try it!
+                                                    a(href='#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?apikey=#{app.apiKey}&url=#{app.swaggerLink}' target='_blank').btn.btn-light.border Try it!
                                                 else if apiInfo.auth == "oauth2" && app.redirectUri && app.redirectUri.indexOf("swagger-ui/oauth2-redirect.html") > 0
-                                                    a(href='#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?client_id=#{app.clientId}&client_secret=#{app.clientSecret}&url=#{app.swaggerLink}&application=#{app.id}&redirect_uri=#{app.redirectUri}' target='_blank').btn.btn-default Try it!
+                                                    a(href='#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?client_id=#{app.clientId}&client_secret=#{app.clientSecret}&url=#{app.swaggerLink}&application=#{app.id}&redirect_uri=#{app.redirectUri}' target='_blank').btn.btn-light.border Try it!
                                                 else if apiInfo.auth == "oauth2" && directAuth
-                                                    a(href='#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?client_id=#{app.clientId}&client_secret=#{app.clientSecret}&url=#{app.swaggerLink}&application=#{app.id}' target='_blank').btn.btn-default Try it!
+                                                    a(href='#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?client_id=#{app.clientId}&client_secret=#{app.clientSecret}&url=#{app.swaggerLink}&application=#{app.id}' target='_blank').btn.btn-light.border Try it!
                                                 else if apiInfo.auth == "oauth2" && redirectAuth && !apiInfo.hasSwaggerApplication
-                                                    a(href='/applications?register=true&swagger=true').btn.btn-default Swagger UI setup!
+                                                    a(href='/applications?register=true&swagger=true').btn.btn-light.border Swagger UI setup!
                                                 else
                                                     | ---
                                         else
@@ -242,14 +242,14 @@ block content
 
                     p Need an additional application? Click the button below.
 
-                    a(href="/applications?register=true").btn.btn-default Register Application &raquo;
+                    a(href="/applications?register=true").btn.btn-light.border Register Application &raquo;
 
             if authUser.admin
-                .panel.panel-success
-                    .panel-heading
+                .card
+                    .card-header.bg-success.text-white
                         +panelTitle('All Subscriptions (Admin only)', null, '#admin_subscriptions')
-                    #admin_subscriptions.collapse.panel-collapse
-                        .panel-body
+                    #admin_subscriptions.collapse
+                        .card-body
                             if apiSubscriptions && apiSubscriptions.length > 0
                                 p This is a global list of all applications subscribed to this API:
 
@@ -262,11 +262,11 @@ block content
 
                                 br
 
-                                .panel.panel-danger
-                                    .panel-heading
+                                .card.bg-danger.text-white
+                                    .card-header
                                         +panelTitle('Super Danger Zone', null, '#admin_superdanger')
-                                    #admin_superdanger.collapse.panel-collapse
-                                        .panel-body
+                                    #admin_superdanger.collapse
+                                        .card-body
                                             p.
                                                 In preparation of a retraction of an API, you may (as an Admin) here delete all subscriptions to this API.
                                                 Please be aware of the consequense for your users: <b>Applications using the API will no longer function</b>

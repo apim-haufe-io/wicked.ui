@@ -110,7 +110,7 @@ block bodyScripts
         });
 
 block content
-    .jumbotron.wicked-application-title
+    .jumbotron.wicked-application-title.mt-5
         .container.wicked-title-container
             h1 Register and View Your Applications
 
@@ -122,63 +122,62 @@ block content
             An application is the entity to which you attach your API subscriptions. You can own or co-own applications with other developers. Once you have registered an application, you can create and assign APIs that use it. You can assign only one application to an API.
 
         if !authUser
-            .panel.panel-danger
-                .panel-heading
-                    h4.panel-title Not logged in
-                .panel-body
+            .card.border-danger
+                .card-header.bg-danger.text-light
+                    h4.card-title.mb-0 Not logged in
+                .card-body
                     p You are not logged in. Applications can only be created if you are logged in.
 
-                    a(href="/login?redirect=/applications").btn.btn-default Log in &raquo;
+                    a(href="/login?redirect=/applications").btn.btn-light.border Log in &raquo;
 
         else
-            .panel-group
-                div(class='panel panel-default')
-                    .panel-heading
-                        +panelTitle('Register a new Application', '/help/applications', '#collapse')
-                    div(id='collapse' class='panel-collapse collapse #{showRegister}')
-                        .panel-body
-                            form(role='form' id='new_app_form' action='/applications/register' method='POST')
-                                .form-group
-                                    label(for='appid') Application ID:
-                                    input(type='string' id='appid' name='appid').form-control
-                                    small Application IDs must be all lower case, and may only contain the following characters: a-z, 0-9, -, _
-                                    small 
-                                        span(id='errorAppid' style='color:red')
-                                .form-group
-                                    label(for='appname') Application Name:
-                                    input(type='string' id='appname' name='appname').form-control
-                                    small A human readable description/name of the your application, e.g. 'My Awesome Application'
-                                    small 
-                                        span(id='errorAppname' style='color:red')
-                                .form-group
-                                    label(for='appdesc') Application Description:
-                                    textarea(name='appdesc' id='desc' style='height:100px').form-control= appdesc
-                                    small The Application Description field can be used to provide additional details about your application use case, including any relevant URLs. If you are subscribing to an API that requires approvals, completing this field will aid in processing time
-                                    div(id='markdown')
-                                .checkbox
-                                    label
-                                        input(type='checkbox' id='hasredirecturi' name='hasredirecturi' data-toggle='collapse' data-target='#redirecturipanel')
-                                        strong This application will use OAuth2.0 Flows
-                                        | &nbsp;(other than the Client Credentials flow, i.e. using redirects)
+            div(class='card border')
+                .card-header
+                    +panelTitle('Register a new Application', '/help/applications', '#collapse')
+                div(id='collapse' class='collapse #{showRegister}')
+                    .card-body
+                        form(role='form' id='new_app_form' action='/applications/register' method='POST')
+                            .form-group
+                                label(for='appid') Application ID:
+                                input(type='string' id='appid' name='appid').form-control
+                                small Application IDs must be all lower case, and may only contain the following characters: a-z, 0-9, -, _
+                                small
+                                    span(id='errorAppid' style='color:red')
+                            .form-group
+                                label(for='appname') Application Name:
+                                input(type='string' id='appname' name='appname').form-control
+                                small A human readable description/name of the your application, e.g. 'My Awesome Application'
+                                small
+                                    span(id='errorAppname' style='color:red')
+                            .form-group
+                                label(for='appdesc') Application Description:
+                                textarea(name='appdesc' id='desc' style='height:100px').form-control= appdesc
+                                small The Application Description field can be used to provide additional details about your application use case, including any relevant URLs. If you are subscribing to an API that requires approvals, completing this field will aid in processing time
+                                div(id='markdown')
+                            .form-group.form-check
+                                input(type='checkbox' class="form-check-input" id='hasredirecturi' name='hasredirecturi' data-toggle='collapse' data-target='#redirecturipanel')
+                                label.form-check-label
+                                    strong This application will use OAuth2.0 Flows
+                                    | &nbsp;(other than the Client Credentials flow, i.e. using redirects)
 
-                                div(id='redirecturipanel' class='panel-collapse collapse #{showSwagger}')
-                                    .checkbox
-                                        label
-                                            input(type='checkbox' id='confidential' name='confidential')
-                                            strong This application is able to store a client secret confidentially (server side).
-                                            
-                                    .form-group
-                                        label(for='redirecturi') Redirect URI:
-                                        input(type='string' id='redirecturi' name='redirecturi' value='https://').form-control
-                                        small.
-                                            The callback under which your web application can be called back, passing the access token in the fragment.
-                                            Check the documentation for a <a href="https://github.com/Haufe-Lexware/wicked.haufe.io/blob/master/doc/valid-redirect-uris.md" target="_blank">list of valid redirect URIs</a>.
-                                        small 
-                                            span(id='errorRedirect' style='color:red')
-                            // Note that this button is _outside_ of the form, and calls submit() over jQuery
-                            // in Javascript. It validates the data partly over an Ajax call.
-                            p
-                                button(id='submit_new' onclick='javascript:validateNewApplication()').btn.btn-success Register Application
+                            div(id='redirecturipanel' class='collapse #{showSwagger}')
+                                .form-group.form-check
+                                    input(type='checkbox' class="form-check-input" id='confidential' name='confidential')
+                                    label.form-check-label
+                                        strong This application is able to store a client secret confidentially (server side).
+
+                                .form-group
+                                    label(for='redirecturi') Redirect URI:
+                                    input(type='string' id='redirecturi' name='redirecturi' value='https://').form-control
+                                    small.
+                                        The callback under which your web application can be called back, passing the access token in the fragment.
+                                        Check the documentation for a <a href="https://github.com/Haufe-Lexware/wicked.haufe.io/blob/master/doc/valid-redirect-uris.md" target="_blank">list of valid redirect URIs</a>.
+                                    small
+                                        span(id='errorRedirect' style='color:red')
+                        // Note that this button is _outside_ of the form, and calls submit() over jQuery
+                        // in Javascript. It validates the data partly over an Ajax call.
+                        p
+                            button(id='submit_new' onclick='javascript:validateNewApplication()').btn.btn-success Register Application
 
             hr
 

@@ -19,7 +19,7 @@ block scripts
         }
 
 block content
-    .jumbotron.wicked-api-title
+    .jumbotron.wicked-api-title.mt-5
         .container.wicked-title-container
             h1= title
             
@@ -27,22 +27,22 @@ block content
     
     .container.wicked-container
     
-        h3 Application '#{application.name}'
+        h3 Application "#{application.name}"
     
         p.
             Specify which plan you want to subscribe to for the selected application.
        
         if subscribeError
-            .panel.panel-danger
-                .panel-heading
-                    h4.panel-title Error
-                .panel-body
+            .card.bg-danger.text-white
+                .card-header
+                    h4.card-title Error
+                .card-body
                     p= subscribeError
         if subscribeWarning
-            .panel.panel-warning
-                .panel-heading
-                    h4.panel-title Warning
-                .panel-body
+            .card.bg-warning.text-white
+                .card-header
+                    h4.card-title Warning
+                .card-body
                     p= subscribeWarning
 
         if allowSubscribe
@@ -50,10 +50,10 @@ block content
                 if apiPlans && apiPlans.length > 0
 
                     if apiInfo.auth == 'oauth2'
-                        .panel.panel-default
-                            .panel-heading
+                        .card.border
+                            .card-header
                                 +panelTitle('Trusted Application/Subscription', '/help/trusted')
-                            .panel-body
+                            .card-body
                                 p.
                                     Check this check box if you want the subscription to this API to be a trusted subscription for this application.
                                     Please note that this will require approval, regardless of the chosen API plan. See the help page for more information.

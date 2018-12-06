@@ -32,7 +32,7 @@ block bodyScripts
                   return $("<a>").attr("href", "/applications/"+item.application.id).text(value);
                 }
               },
-              { name: "application.trusted", type: "text", title: "Trusted", width: "4%",
+              { name: "application.trusted", type: "text", title: "Trusted", width: "10%",
                 itemTemplate: function (value, item) {
                   return item.application.trusted ? 'Yes' : '-';
                 }
@@ -79,7 +79,7 @@ block bodyScripts
            $("#approvalsGrid").jsGrid("option", "filtering", false);
         });
 block content
-    .jumbotron.wicked-admin-title
+    .jumbotron.wicked-admin-title.mt-5
         .container.wicked-title-container
             h1 Pending Subscription Approvals
 
