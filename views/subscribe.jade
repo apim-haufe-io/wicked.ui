@@ -33,15 +33,15 @@ block content
             Specify which plan you want to subscribe to for the selected application.
        
         if subscribeError
-            .card.bg-danger.text-white
-                .card-header
-                    h4.card-title Error
+            .card.border-danger
+                .card-header.bg-danger.text-white
+                    h4.card-title.mb-0 Error
                 .card-body
                     p= subscribeError
         if subscribeWarning
-            .card.bg-warning.text-white
-                .card-header
-                    h4.card-title Warning
+            .card.border-warning
+                .card-header.bg-warning.text-white
+                    h4.card-title.mb-0 Warning
                 .card-body
                     p= subscribeWarning
 

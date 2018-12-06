@@ -35,9 +35,9 @@ block content
     .container.wicked-container
 
         if apiInfo.deprecated
-            .card.bg-danger.text-white
-                .card-header
-                    h4.card-title API deprecated
+            .card.border-danger
+                .card-header.bg-danger.text-white
+                    h4.card-title.mb-0 API deprecated
                 .card-body
                     p.
                         This API has been deprecated by the API Portal maintainers. This means it can no longer be subscribed to.
@@ -121,9 +121,9 @@ block content
                     a(href="#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?url=#{encodeURIComponent(genericSwaggerUrl)}" role="button" target="_blank").btn.btn-light.border View Swagger definition &raquo;
         
         if !authUser
-            .card.bg-danger.text-white
-                .card-header
-                    h4.card-title Not logged in
+            .card.border-danger
+                .card-header.bg-danger.text-white
+                    h4.card-title.mb-0 Not logged in
                 .card-body
                     p.
                         You are currently not logged in, so we can't display your registered applications.
@@ -262,8 +262,8 @@ block content
 
                                 br
 
-                                .card.bg-danger.text-white
-                                    .card-header
+                                .card.border-danger
+                                    .card-header.bg-danger.text-white
                                         +panelTitle('Super Danger Zone', null, '#admin_superdanger')
                                     #admin_superdanger.collapse
                                         .card-body
