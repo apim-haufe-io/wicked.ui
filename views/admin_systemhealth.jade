@@ -8,7 +8,7 @@ block bodyScripts
         });
 
 block content
-    .jumbotron.wicked-admin-title
+    .jumbotron.wicked-admin-title.mt-5
         .container.wicked-title-container
             h1 System Health
             
@@ -38,11 +38,11 @@ block content
                                 | #{info.name}
                         td
                             if info.healthy == 1
-                                span.label.label-success Healthy
+                                span.badge.badge-success Healthy
                             else if info.healthy == 2
-                                span.label.label-warning Initializing
+                                span.badge.badge-warning Initializing
                             else
-                                span.label.label-danger Unhealthy
+                                span.badge.badge-danger Unhealthy
                         td= info.message
                         td
                             if info.pendingEvents > 0

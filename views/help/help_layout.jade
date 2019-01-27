@@ -10,13 +10,13 @@ mixin helpItem(anchor, title)
 block content
   - var toc = []
 
-  .container(style='padding-top: 50px')
+  .container.mt-5.pt-5
     .row
       .col-md-8
 
         block help_content
 
-      .col-md-4.col-md-push-8(style='position:fixed')
+      .col-md-4.position-sticky
 
         h3
           a(href='/help') Help Index
