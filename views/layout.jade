@@ -14,7 +14,7 @@ doctype html
 html
   head
     title #{glob.title} - #{title}
-    link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/assets/style.css')
     link(rel='stylesheet', href='/content/wicked.css')
     link(rel="stylesheet", href="/assets/highlight/css/default.css")
     link(rel='stylesheet', href='/assets/jsgrid/jsgrid.min.css')
@@ -52,7 +52,7 @@ html
                         up using email address or password, or by using one of the federated logins you have configured (if applicable).
 
 
-    nav(class="navbar navbar-dark navbar-top shadow-sm fixed-top navbar-expand-md py-0")
+    nav(class="navbar navbar-dark bg-primary navbar-top shadow-sm fixed-top navbar-expand-md py-0")
         .container
             a.navbar-brand(href=glob.layouts.defautRootUrl target=glob.layouts.defautRootUrlTarget)
                 if glob.layouts.defautRootUrlText != null

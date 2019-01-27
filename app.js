@@ -113,6 +113,18 @@ app.initialize = function (done) {
     }
 
     app.portalGlobals.isProduction = app.isProduction;
+
+    // Configure node-sass-middleware
+    var sassMiddleware = require('node-sass-middleware');
+    app.use(sassMiddleware({
+        src: path.join(app.portalGlobals.db.staticConfig, 'content', 'stylesheets'),
+        dest: path.join(__dirname, 'public'),
+        prefix: '/assets',
+        debug: wicked.isDevelopmentMode(),
+        outputStyle: 'compressed',
+        response: true,
+    }));
+
     // Once for the really static content
     app.use('/content', content);
 
