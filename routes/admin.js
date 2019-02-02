@@ -112,6 +112,16 @@ function mustBeAdminMiddleware(req, res, next) {
     return next();
 }
 
+function mustBeAdminOrApproverMiddleware(req, res, next) {
+    const loggedInUserId = utils.getLoggedInUserId(req);
+    if (!loggedInUserId)
+        return utils.fail(403, 'You must be logged in to view this page.', next);
+    if (!req.user.admin && !req.user.approver)
+        return utils.fail(403, 'Only Admins Or Approvers can view this page. If you need access, contact your site administrator.', next);
+
+    return next();
+}
+
 router.get('/users', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/users')");
     if (!utils.acceptJson(req)) {
@@ -137,16 +147,21 @@ router.get('/users', mustBeAdminMiddleware, function (req, res, next) {
     });
 });
 
-router.get('/subscriptions', mustBeAdminMiddleware, function (req, res, next) {
+router.get('/subscriptions', mustBeAdminOrApproverMiddleware, function (req, res, next) {
     debug("get('/subscriptions')");
-    if (!utils.acceptJson(req)) {
-        return; 
-    }
-    const filterFields = ['applications_id', 'plan_id', 'api_id'];
+    const filterFields = ['application', 'application_name','plan', 'api', 'owner' , 'user'];
     const subsUri = utils.makePagingUri(req, '/subscriptions?embed=1&', filterFields);
     utils.getFromAsync(req, res, subsUri, 200, function (err, subsResponse) {
         if (err)
             return next(err);
+        if (!utils.acceptJson(req)) {
+            res.render('admin_subscriptions', {
+                authUser: req.user,
+                glob: req.app.portalGlobals,
+                title: 'All Subscriptions',
+            });
+            return;
+        }    
         if (utils.acceptJson(req)) {
             res.json({
                 title: 'All Subscriptions',
