@@ -171,6 +171,40 @@ router.get('/subscriptions', mustBeAdminOrApproverMiddleware, function (req, res
     });
 });
 
+router.get('/subscriptions_csv', mustBeAdminOrApproverMiddleware, function (req, res, next) {
+    debug("get('/subscriptions')");
+    utils.getFromAsync(req, res, '/subscriptions?embed=1&', 200, function (err, subsResponse) {
+        if (err)
+            return next(err);
+        tmp.file(function (err, path, fd, cleanup) {
+            if (err)
+                return next(err);
+            const outStream = fs.createWriteStream(path);
+            outStream.write('Application;Owners;Users;Api;Plan\n');
+            for (let i = 0; i < subsResponse.items.length; ++i) {
+                const item = subsResponse.items[i];
+                if(item.application != '__portal'){
+                    const subscLine = item.application_name + ';' +item.owner+';'+item.user+';'+item.api+';'+item.plan+'\n';
+                    debug(subscLine);
+                    outStream.write(subscLine);
+                }
+            }
+            outStream.end(function (err) {
+                if (err) {
+                    cleanup();
+                    return next(err);
+                }
+                res.download(path, 'subscriptions.csv', function (err) {
+                    cleanup();
+                    if (err) {
+                        return next(err);
+                    }
+                });
+            });
+        });    
+    });
+});
+
 router.get('/applications', mustBeAdminMiddleware, function (req, res, next) {
     debug("get('/applications')");
     if (!utils.acceptJson(req)) {
