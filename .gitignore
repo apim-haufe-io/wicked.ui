@@ -6,3 +6,5 @@ node_modules
 *.log
 *.tgz
 package-lock.json
+build_date
+git_*
