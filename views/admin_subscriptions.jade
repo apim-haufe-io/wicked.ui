@@ -31,7 +31,16 @@ block bodyScripts
                 return $("<a>").attr("href", item._links.application.href.toLowerCase()).text(value);
               }
           },    
-          { name: "owner", type: "text", title: "Owners", width: 160},
+          { name: "owner", type: "text", title: "Owners", width: 160, 
+             itemTemplate: function(value, item) {
+                 var names = item.owner.split(',');
+                 var resp = [];
+                 item.userid.split(',').forEach(function(id, idx){
+                   resp.push("<a href=\'/users/"+id.trim()+"\'>"+names[idx]+"</a>");
+                 });
+                 return resp.join(', ');
+            }
+          },
           { name: "user", type: "text", title: "Users", width: 160},
           { name: "api", type: "text", title: "API", width: 50, editing: false, 
              itemTemplate: function(value, item) {
