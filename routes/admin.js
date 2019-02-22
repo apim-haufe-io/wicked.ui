@@ -180,14 +180,14 @@ router.get('/subscriptions_csv', mustBeAdminOrApproverMiddleware, function (req,
             if (err)
                 return next(err);
             const outStream = fs.createWriteStream(path);
-            outStream.write('Application;Owners;Users;Api;Plan\n');
+            outStream.write('Status;Application;Owners;Users;Api;Plan\n');
             for (let i = 0; i < subsResponse.items.length; ++i) {
                 const item = subsResponse.items[i];
-                if(item.application != '__portal'){
-                    const subscLine = item.application_name + ';' +item.owner+';'+item.user+';'+item.api+';'+item.plan+'\n';
-                    debug(subscLine);
-                    outStream.write(subscLine);
-                }
+                const subscLine = ((item.approved) ? 'Approved' : 'Pending')+ ';'
+                                  +item.application_name + ';' +item.owner+';'
+                                  +item.user+';'+item.api+';'+item.plan+'\n';
+                debug(subscLine);
+                outStream.write(subscLine);
             }
             outStream.end(function (err) {
                 if (err) {

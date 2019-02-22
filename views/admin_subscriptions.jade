@@ -21,6 +21,11 @@ block bodyScripts
           }
         },
         fields: [
+          { name: "status", type: "text", title: "Status", width: 50, editing: false, filtering: false,
+             itemTemplate: function(value, item) {
+                 return $("<div>").text((item.approved) ? "Approved" : "Pending");
+              }
+          },
           { name: "application_name", type: "text", title: "Application", width: 110, editing: false,
               itemTemplate: function(value, item) {
                 return $("<a>").attr("href", item._links.application.href.toLowerCase()).text(value);
