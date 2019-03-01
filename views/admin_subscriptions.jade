@@ -33,6 +33,7 @@ block bodyScripts
           },    
           { name: "owner", type: "text", title: "Owners", width: 160, 
              itemTemplate: function(value, item) {
+                 if(!item.owner) return "";
                  var names = item.owner.split(',');
                  var resp = [];
                  item.userid.split(',').forEach(function(id, idx){
