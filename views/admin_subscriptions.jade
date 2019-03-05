@@ -23,7 +23,9 @@ block bodyScripts
         fields: [
           { name: "status", type: "text", title: "Status", width: 50, editing: false, filtering: false,
              itemTemplate: function(value, item) {
-                 return $("<div>").text((item.approved) ? "Approved" : "Pending");
+                let status = (item.approved) ? `Approved` : `Pending`;
+                status = (item.trusted) ? `${status}, (Trusted)` : status;
+                return $("<div>").text(status);
               }
           },
           { name: "application_name", type: "text", title: "Application", width: 110, editing: false,

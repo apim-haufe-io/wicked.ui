@@ -173,7 +173,7 @@ router.get('/subscriptions', mustBeAdminOrApproverMiddleware, function (req, res
 
 router.get('/subscriptions_csv', mustBeAdminOrApproverMiddleware, function (req, res, next) {
     debug("get('/subscriptions')");
-    utils.getFromAsync(req, res, '/subscriptions?embed=1&', 200, function (err, subsResponse) {
+    utils.getFromAsync(req, res, '/subscriptions?embed=1', 200, function (err, subsResponse) {
         if (err)
             return next(err);
         tmp.file(function (err, path, fd, cleanup) {
@@ -183,9 +183,9 @@ router.get('/subscriptions_csv', mustBeAdminOrApproverMiddleware, function (req,
             outStream.write('Status;Application;Owners;Users;Api;Plan\n');
             for (let i = 0; i < subsResponse.items.length; ++i) {
                 const item = subsResponse.items[i];
-                const subscLine = ((item.approved) ? 'Approved' : 'Pending')+ ';'
-                                  +item.application_name + ';' +item.owner+';'
-                                  +item.user+';'+item.api+';'+item.plan+'\n';
+                let status = (item.approved) ? `Approved`: `Pending`;
+                status = (item.trusted) ? `${status}, (Trusted)` : status;
+                const subscLine =`${status}; ${item.application_name}; ${item.owner}; ${item.user}; ${item.api}; ${item.plan}\n`
                 debug(subscLine);
                 outStream.write(subscLine);
             }
