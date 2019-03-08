@@ -35,17 +35,23 @@ block bodyScripts
           },    
           { name: "owner", type: "text", title: "Owners", width: 160, 
              itemTemplate: function(value, item) {
-                 if(!item.owner) return "";
-                 var names = item.owner.split(',');
-                 var resp = [];
-                 item.userid.split(',').forEach(function(id, idx){
-                   resp.push("<a href=\'/users/"+id.trim()+"\'>"+names[idx]+"</a>");
+                 let resp = [];
+                 item.owner_data.forEach(function(owner){
+                   resp.push("<a href=\'/users/"+owner.users_id+"\'>"+owner.email+"</a>");
                  });
                  return resp.join(', ');
             }
           },
-          { name: "user", type: "text", title: "Users", width: 160},
-          { name: "api", type: "text", title: "API", width: 50, editing: false, 
+          { name: "user", type: "text", title: "Users", width: 160, 
+             itemTemplate: function(value, item) {
+                 let resp = [];
+                 item.owner_data.forEach(function(owner){
+                   resp.push(owner.name);
+                 });
+                 return resp.join(', ');
+            }
+          },
+         { name: "api", type: "text", title: "API", width: 50, editing: false, 
              itemTemplate: function(value, item) {
                  return $("<a>").attr("href", item._links.apis.href+'/'+item.api).text(value);
               }
