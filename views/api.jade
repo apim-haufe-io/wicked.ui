@@ -141,7 +141,7 @@ block content
                     p                    
                         a(href="/login?redirect=/apis/#{apiInfo.id}").btn.btn-default Log in &raquo;
 
-        else
+          else if apiInfo.auth != "none"
             .panel.panel-default
                 .panel-heading
                     +panelTitle('Applications', '/help/api')
