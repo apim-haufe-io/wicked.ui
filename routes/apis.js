@@ -9,7 +9,6 @@ const marked = require('marked');
 const markedOptions = utils.markedOptions;
 const async = require('async');
 const cors = require('cors');
-const mustache = require('mustache');
 const wicked = require('wicked-sdk');
 
 router.get('/', function (req, res, next) {
@@ -80,6 +79,17 @@ function unique(arr) {
     return a;
 }
 
+function deduceHostAndSchema(req, apiConfig) {
+    const nw = req.app.portalGlobals.network;
+    const ssl = (nw.schema == 'https') ? true : false;
+    let schema = nw.schema;
+    switch (apiConfig.api.protocol) {
+        case 'ws:':
+        case 'wss:':
+            schema = (ssl) ? 'wss' : 'ws';
+    }
+    return `${schema}://${nw.apiHost}`;
+}
 
 router.get('/:api', function (req, res, next) {
     debug("get('/:api')");
@@ -149,10 +159,10 @@ router.get('/:api', function (req, res, next) {
         // necessary configuration option for any API gateway.
         // console.log(JSON.stringify(apiConfig));
         const apiUris = [];
-        const nw = req.app.portalGlobals.network;
+        const host = deduceHostAndSchema(req, apiConfig);
         for (let u = 0; u < apiConfig.api.uris.length; ++u) {
             const apiRequestUri = apiConfig.api.uris[u];
-            apiUris.push(nw.schema + '://' + nw.apiHost + apiRequestUri);
+            apiUris.push(`${host}${apiRequestUri}`);
         }
 
         const plans = results.getPlans;
