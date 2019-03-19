@@ -81,6 +81,7 @@ function unique(arr) {
 
 function deduceHostAndSchema(req, apiConfig) {
     const nw = req.app.portalGlobals.network;
+    const host = (apiConfig.api.host) ?  apiConfig.api.host : nw.apiHost;
     const ssl = (nw.schema == 'https') ? true : false;
     let schema = nw.schema;
     switch (apiConfig.api.protocol) {
@@ -88,7 +89,7 @@ function deduceHostAndSchema(req, apiConfig) {
         case 'wss:':
             schema = (ssl) ? 'wss' : 'ws';
     }
-    return `${schema}://${nw.apiHost}`;
+    return `${schema}://${host}`;
 }
 
 router.get('/:api', function (req, res, next) {
