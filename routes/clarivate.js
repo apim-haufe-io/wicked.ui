@@ -1,6 +1,8 @@
 'use strict';
 var request = require('request');
 var express = require('express');
+var wicked = require('wicked-sdk');
+
 var router = express.Router();
 var async = require('async');
 var debug = require('debug')('portal:clarivate');
@@ -239,7 +241,6 @@ function getFilteredConsumerId(req,res, next, callback) {
     });
 }
 
-
 router.get('/customheaders/:apiId', function (req, res, next) {
   var apiId = req.params.apiId;
   var payload=[];
@@ -267,69 +268,64 @@ router.get('/customheaders/:apiId', function (req, res, next) {
 });
 
 router.post('/validate/scopes/:api', function (req, res, next) {
-  debug("get('/:api')");
   const apiId = req.params.api;
   const profile = req.body.profile;
   const ENTITLEMENTS = "1p:ent";
   const AUTHENTICATEDUSER = "sub";
+  async.series({
+    getApi: callback => wicked.getApi(apiId, callback),
 
-  async.parallel({
-      getApi: callback => utils.getFromAsync(req, res, '/apis/' + apiId, 200, callback),
   }, function (err, results) {
-      if (err)
-          return next(err);
-      const apiInfo = results.getApi; 
-      let authorized = true;
-      const authenticated_scope = [];
-      if(!profile[ENTITLEMENTS]){
-          if (apiInfo.settings && apiInfo.settings.scopes) {
-              for (let scope in apiInfo.settings.scopes) {
-                  authenticated_scope.push(scope);
-              }
-          }
-          res.json( {
-              allow: true,
-              authenticated_userid: profile[AUTHENTICATEDUSER],
-              authenticated_scope: authenticated_scope
-          });
-          return;
-      }
-      const decoded = Buffer.from(profile[ENTITLEMENTS], 'base64').toString();
-      const authenticated_userid = `${profile[AUTHENTICATEDUSER]}:${profile[ENTITLEMENTS]}`;
-
-      // Verify it's really a base64 string
-      const encoded = Buffer.from(decoded).toString('base64');
-      if (profile[ENTITLEMENTS] !== encoded)
-          throw new Error('Input string is not a valid base64 encoded string');
-      const userscopes = {};    
-      decoded.split(',').map(function(uscope) {
-          uscope = uscope.trim().toLowerCase();
-          userscopes[uscope] = true;
-          return uscope;
-      });
-      if (apiInfo.settings && apiInfo.settings.scopes) {
-          for (let scope in apiInfo.settings.scopes) {
-              if(userscopes[scope]){
-                  authenticated_scope.push(scope);
-              } else {
-                  authorized = false;
-              }
-          }
-      }    
-      if(authorized){
-          res.json( {
-              allow: authorized,
-              authenticated_scope: authenticated_scope,
-              authenticated_userid: authenticated_userid
-          });
-      } else {
-          res.json({
-              allow: authorized,
-              error_message: "Invalid scope"
-          });
-      }
+    const apiInfo = results.getApi;
+    let authorized = true;
+    const authenticated_scope = [];
+    if(!profile[ENTITLEMENTS]){
+        if (apiInfo.settings && apiInfo.settings.scopes) {
+            for (let scope in apiInfo.settings.scopes) {
+                authenticated_scope.push(scope);
+            }
+        }
+        res.json( {
+            allow: true,
+            authenticated_userid: profile[AUTHENTICATEDUSER],
+            authenticated_scope: authenticated_scope
+        });
+        return;
+    }
+    const decoded = Buffer.from(profile[ENTITLEMENTS], 'base64').toString();
+    const authenticated_userid = `${profile[AUTHENTICATEDUSER]}:${profile[ENTITLEMENTS]}`;
+    // Verify it's really a base64 string
+    const encoded = Buffer.from(decoded).toString('base64');
+    if (profile[ENTITLEMENTS] !== encoded)
+        throw new Error('Input string is not a valid base64 encoded string');
+    const userscopes = {};    
+    decoded.split(',').map(function(uscope) {
+        uscope = uscope.trim().toLowerCase();
+        userscopes[uscope] = true;
+        return uscope;
+    });
+    if (apiInfo.settings && apiInfo.settings.scopes) {
+        for (let scope in apiInfo.settings.scopes) {
+            if(userscopes[scope]){
+                authenticated_scope.push(scope);
+            } else {
+                authorized = false;
+            }
+        }
+    }    
+    if(authorized){
+        res.json({
+            allow: true,
+            authenticated_scope: authenticated_scope,
+            authenticated_userid: authenticated_userid
+        });
+    } else {
+        res.json({
+           error_message: "Invalid scope"
+        });
+    }
   });
-});
+}),
 
 router.post('/:appId/subscribe/:apiId', function (req, res, next) {
   debug("post('/:appId/subscribe/:apiId')");
