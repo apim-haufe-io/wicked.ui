@@ -325,7 +325,7 @@ router.post('/validate/scopes/:api', function (req, res, next) {
         });
     }
   });
-}),
+});
 
 router.post('/:appId/subscribe/:apiId', function (req, res, next) {
   debug("post('/:appId/subscribe/:apiId')");
