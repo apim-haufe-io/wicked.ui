@@ -193,7 +193,7 @@ function getAdmin(req, res, uri, callback) {
 };
 
 function getSubscriptions(req, res, next) {
-	const filterFields = ['application', 'plan', 'api', 'owner'];
+	const filterFields = ['application_name', 'plan', 'api', 'owner'];
 	const subsUri = utils.makePagingUri(req, '/subscriptions?embed=1&', filterFields);
 	utils.getFromAsync(req, res, subsUri, 200, function (err, subsResponse) {
 		if (err) {
