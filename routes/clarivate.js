@@ -218,7 +218,7 @@ function getSubscriptions(req, res, next) {
 function getFilteredConsumerId(req,res, next, callback) {
     const consumerid = req.query.consumerid.trim();
     const filterFields = ['application_name', 'plan', 'api', 'owner', 'id'];
-    getAdmin(req, res, '/consumers/'+req.query.consumerid, (err, consumer) => {
+    getAdmin(req, res, `/consumers/${consumerid}`, (err, consumer) => {
 			if (err) {
 					return next(err);
 			}
