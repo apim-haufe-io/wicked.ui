@@ -224,20 +224,20 @@ function getFilteredConsumerId(req,res, next, callback) {
 			}
 			let body = utils.getJson(consumer.body);
 			if (body && body.message === "Not found") {
-					res.json({
-							title: 'All Subsriptions',
-							subscriptions: null
-					});
+				res.json({
+						title: 'All Subsriptions',
+						subscriptions: null
+				});
 			} else {
-          req.query.id = body.custom_id;
-          const subsUri = utils.makePagingUri(req, '/subscriptions?embed=1&', filterFields);
-          utils.getFromAsync(req, res, subsUri, 200, (err, subsResponse) => {
+        req.query.id = body.custom_id;
+        const subsUri = utils.makePagingUri(req, '/subscriptions?embed=1&', filterFields);
+        utils.getFromAsync(req, res, subsUri, 200, (err, subsResponse) => {
           //Add consumerid field to the response
           subsResponse.items[0].consumerid = consumerid;
           res.json({
             title: 'All Subsriptions',
             subscriptions: subsResponse
-           });
+          });
         })
 			}
     });
