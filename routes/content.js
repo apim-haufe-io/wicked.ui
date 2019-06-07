@@ -12,6 +12,7 @@ function isPublic(uriName) {
         uriName.endsWith('jpeg') ||
         uriName.endsWith('png') ||
         uriName.endsWith('gif') ||
+        uriName.endsWith('js') ||
         uriName.endsWith('css');
 }
 
