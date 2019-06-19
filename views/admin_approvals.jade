@@ -12,11 +12,10 @@ block bodyScripts
                     url: "/admin/approvals",
                     dataType: "json"
                   }).done(function(result) {
-                    console.log(result.approvals)
                     if (isEmptyGridFilter(filter)) {
                       data = result.approvals
                     }
-                    else if (!isEmptyGridFilter(filter)) {
+                    else  {
                       data = $.grep(result.approvals, function (item) {
                         if (applyGridFilter(filter, item))
                           return item;
