@@ -8,16 +8,22 @@ block bodyScripts
              controller: {
               loadData: function (filter) {
                   var d = $.Deferred();
-                  var data = !{approvals};
-                  if (isEmptyGridFilter(filter)) {
+                  $.ajax({
+                    url: "/admin/approvals",
+                    dataType: "json"
+                  }).done(function(result) {
+                    console.log(result.approvals)
+                    if (isEmptyGridFilter(filter)) {
+                      data = result.approvals
+                    }
+                    else if (!isEmptyGridFilter(filter)) {
+                      data = $.grep(result.approvals, function (item) {
+                        if (applyGridFilter(filter, item))
+                          return item;
+                      });
+                    }
                     d.resolve(data);
-                    return d.promise();
-                  }
-                  data = $.grep(data, function (item) {
-                    if (applyGridFilter(filter, item))
-                       return item;
                   });
-                  d.resolve(data);
                   return d.promise();
               }
             },
@@ -57,16 +63,36 @@ block bodyScripts
                                                       .attr("style", "float: left; margin: 2px; width: 6em")
                                                       .text("Approve")
                                                       .on("click", function () {
-                                                        $form.attr("action", "/admin/approvals/approve");
-                                                        $form.submit();
+                                                        $.ajax({
+                                                          url: "/admin/approvals/approve",
+                                                          type: "POST",
+                                                          dataType: "json",
+                                                          data: {
+                                                            id: item.id,
+                                                            app: item.application.id,
+                                                            api: item.api.id
+                                                          }
+                                                        }).done(function(result) {
+                                                          $("#approvalsGrid").jsGrid("loadData");
+                                                        });
                                                       });
                       var $declineBtn = $("<button>").attr("type", "submit")
                                                       .attr("class", "btn btn-sm btn-danger")
                                                       .attr("style", "float: left; margin: 2px; width: 6em")
                                                       .text("Decline")
                                                       .on("click", function () {
-                                                        $form.attr("action", "/admin/approvals/decline");
-                                                        $form.submit();
+                                                        $.ajax({
+                                                          url: "/admin/approvals/decline",
+                                                          type: "POST",
+                                                          dataType: "json",
+                                                          data: {
+                                                            id: item.id,
+                                                            app: item.application.id,
+                                                            api: item.api.id
+                                                          }
+                                                        }).done(function(result) {
+                                                          $("#approvalsGrid").jsGrid("loadData");
+                                                        });
                                                       });
                       return $("<td nowrap>").append($approveBtn)
                                       .append("<span>&nbsp;</span>")
