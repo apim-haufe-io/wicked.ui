@@ -10,13 +10,13 @@ block bodyScripts
                   var d = $.Deferred();
                   $.ajax({
                     url: "/admin/approvals",
-                    data: "filter",
+                    data: filter,
                     dataType: "json"
                   }).done(function(result) {
                     if (isEmptyGridFilter(filter)) {
                       data = result.approvals
                     }
-                    else  {
+                    else {
                       data = $.grep(result.approvals, function (item) {
                         if (applyGridFilter(filter, item))
                           return item;
