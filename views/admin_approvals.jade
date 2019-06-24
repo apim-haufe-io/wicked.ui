@@ -10,6 +10,7 @@ block bodyScripts
                   var d = $.Deferred();
                   $.ajax({
                     url: "/admin/approvals",
+                    data: "filter",
                     dataType: "json"
                   }).done(function(result) {
                     if (isEmptyGridFilter(filter)) {
