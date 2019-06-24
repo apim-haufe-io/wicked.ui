@@ -6,7 +6,7 @@ block bodyScripts
            $('#approvalsGrid').jsGrid({
              width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, autoload: true,
              controller: {
-              loadData: function (filter) {
+                loadData: function (filter) {
                   var d = $.Deferred();
                   $.ajax({
                     url: "/admin/approvals",
@@ -25,7 +25,7 @@ block bodyScripts
                     d.resolve(data);
                   });
                   return d.promise();
-              }
+                }
             },
             fields: [
               { name: "user.email", type: "text", title: "User",
