@@ -7,24 +7,24 @@ block bodyScripts
              width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, autoload: true,
              controller: {
                 loadData: function (filter) {
-                  var d = $.Deferred();
-                  $.ajax({
-                    url: "/admin/approvals",
-                    data: filter,
-                    dataType: "json"
-                  }).done(function(result) {
-                    if (isEmptyGridFilter(filter)) {
-                      data = result.approvals
-                    }
-                    else {
-                      data = $.grep(result.approvals, function (item) {
-                        if (applyGridFilter(filter, item))
-                          return item;
-                      });
-                    }
-                    d.resolve(data);
-                  });
-                  return d.promise();
+                    var d = $.Deferred();
+                    $.ajax({
+                      url: "/admin/approvals",
+                      data: filter,
+                      dataType: "json"
+                    }).done(function(result) {
+                      if (isEmptyGridFilter(filter)) {
+                        data = result.approvals
+                      }
+                      else {
+                        data = $.grep(result.approvals, function (item) {
+                          if (applyGridFilter(filter, item))
+                            return item;
+                        });
+                      }
+                      d.resolve(data);
+                    });
+                    return d.promise();
                 }
             },
             fields: [
@@ -54,6 +54,18 @@ block bodyScripts
                       return this._createOnOffSwitchButton("filtering", this.searchModeButtonClass, false);
                     },
                     itemTemplate: function(value,item) {
+                      function get_options(action) {
+                        return {
+                          url: `/admin/approvals/${action}`,
+                          type: "POST",
+                          dataType: "json",
+                          data: {
+                            id: item.id,
+                            app: item.application.id,
+                            api: item.api.id
+                          }
+                        }
+                      }
                       var $form = $("<form>").attr("role", "form").attr("method","post")
                                               .append("<input type='hidden' name='id' value='" + item.id + "'>")
                                               .append("<input type='hidden' name='api' value='" + item.api.id + "'>")
@@ -63,36 +75,16 @@ block bodyScripts
                                                       .attr("style", "float: left; margin: 2px; width: 6em")
                                                       .text("Approve")
                                                       .on("click", function () {
-                                                        $.ajax({
-                                                          url: "/admin/approvals/approve",
-                                                          type: "POST",
-                                                          dataType: "json",
-                                                          data: {
-                                                            id: item.id,
-                                                            app: item.application.id,
-                                                            api: item.api.id
-                                                          }
-                                                        }).done(function(result) {
-                                                          $("#approvalsGrid").jsGrid("loadData");
-                                                        });
+                                                        const options = get_options('approve')
+                                                        $.ajax(options).done(function () { $("#approvalsGrid").jsGrid("loadData") });
                                                       });
                       var $declineBtn = $("<button>").attr("type", "submit")
                                                       .attr("class", "btn btn-sm btn-danger")
                                                       .attr("style", "float: left; margin: 2px; width: 6em")
                                                       .text("Decline")
                                                       .on("click", function () {
-                                                        $.ajax({
-                                                          url: "/admin/approvals/decline",
-                                                          type: "POST",
-                                                          dataType: "json",
-                                                          data: {
-                                                            id: item.id,
-                                                            app: item.application.id,
-                                                            api: item.api.id
-                                                          }
-                                                        }).done(function(result) {
-                                                          $("#approvalsGrid").jsGrid("loadData");
-                                                        });
+                                                        const options = get_options('decline')
+                                                        $.ajax(options).done(function () { $ ("#approvalsGrid").jsGrid("loadData") });
                                                       });
                       return $("<td nowrap>").append($approveBtn)
                                       .append("<span>&nbsp;</span>")
