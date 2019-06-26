@@ -2,6 +2,27 @@ extends layout
 
 block bodyScripts
     script(type='text/javascript').
+        function approveSubscription(action, item) {
+          $.ajax({
+            url: `/admin/approvals/${action}`,
+            type: "POST",
+            dataType: "json",
+            data: {
+              id: item.id,
+              app: item.application.id,
+              api: item.api.id
+            }
+          })
+            .done(function (data, status) {
+                const sorting = $("#approvalsGrid").jsGrid("getSorting");
+                $ ("#approvalsGrid").jsGrid("loadData").done(function() {
+                $("#approvalsGrid").jsGrid("sort", { field: sorting.field, order: sorting.order })
+              })
+            })
+            .fail(function (xhr, status) {
+              alert(`Failed to ${action} subscription`);
+            });
+        }
         $(document).ready(function(){
            $('#approvalsGrid').jsGrid({
              width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, autoload: true,
@@ -13,6 +34,10 @@ block bodyScripts
                       data: filter,
                       dataType: "json"
                     }).done(function(result) {
+                      if (!!filter.sortField && !!filter.sortOrder) {
+                        delete filter.sortField;
+                        delete filter.sortOrder;
+                      }
                       if (isEmptyGridFilter(filter)) {
                         data = result.approvals
                       }
@@ -75,16 +100,14 @@ block bodyScripts
                                                       .attr("style", "float: left; margin: 2px; width: 6em")
                                                       .text("Approve")
                                                       .on("click", function () {
-                                                        const options = get_options('approve')
-                                                        $.ajax(options).done(function () { $("#approvalsGrid").jsGrid("loadData") });
+                                                        approveSubscription('approve', item);
                                                       });
                       var $declineBtn = $("<button>").attr("type", "submit")
                                                       .attr("class", "btn btn-sm btn-danger")
                                                       .attr("style", "float: left; margin: 2px; width: 6em")
                                                       .text("Decline")
                                                       .on("click", function () {
-                                                        const options = get_options('decline')
-                                                        $.ajax(options).done(function () { $ ("#approvalsGrid").jsGrid("loadData") });
+                                                        approveSubscription('decline', item);
                                                       });
                       return $("<td nowrap>").append($approveBtn)
                                       .append("<span>&nbsp;</span>")
