@@ -18,6 +18,7 @@ block bodyScripts
                   var sorting = $("#approvalsGrid").jsGrid("getSorting");
                   $("#approvalsGrid").jsGrid("sort", sorting);
                 })
+
             })
             .fail(function (xhr, status) {
               alert(`Failed to ${action} subscription`);
@@ -34,10 +35,6 @@ block bodyScripts
                       data: filter,
                       dataType: "json"
                     }).done(function(result) {
-                      if (!!filter.sortField && !!filter.sortOrder) {
-                        delete filter.sortField;
-                        delete filter.sortOrder;
-                      }
                       if (isEmptyGridFilter(filter)) {
                         data = result.approvals
                       }
