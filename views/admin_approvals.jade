@@ -14,7 +14,7 @@ block bodyScripts
             }
           })
             .done(function (data, status) {
-                $("#approvalsGrid").jsGrid("loadData").done(function() {
+                  $("#approvalsGrid").jsGrid("loadData").done(function() {
                   var sorting = $("#approvalsGrid").jsGrid("getSorting");
                   $("#approvalsGrid").jsGrid("sort", sorting);
                 })
@@ -76,18 +76,6 @@ block bodyScripts
                       return this._createOnOffSwitchButton("filtering", this.searchModeButtonClass, false);
                     },
                     itemTemplate: function(value,item) {
-                      function get_options(action) {
-                        return {
-                          url: `/admin/approvals/${action}`,
-                          type: "POST",
-                          dataType: "json",
-                          data: {
-                            id: item.id,
-                            app: item.application.id,
-                            api: item.api.id
-                          }
-                        }
-                      }
                       var $form = $("<form>").attr("role", "form").attr("method","post")
                                               .append("<input type='hidden' name='id' value='" + item.id + "'>")
                                               .append("<input type='hidden' name='api' value='" + item.api.id + "'>")
