@@ -25,6 +25,8 @@ function isValidGridFilter(filter, item) {
 function applyGridFilter(filter, item) {
     if (!filter || !item)
         return false;
+    if (!isValidGridFilter(filter, item))
+        return true;
     for (var prop in filter) {
         if (typeof filter[prop] === "object") { //look for nested
             if (applyGridFilter(filter[prop], item[prop]))
