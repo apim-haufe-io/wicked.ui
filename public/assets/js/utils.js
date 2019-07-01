@@ -14,6 +14,14 @@ function isEmptyGridFilter(filter) {
     return isEmpty;
 }
 
+function isValidGridFilter(filter, item) {
+    for (var prop in filter) {
+        if (item.hasOwnProperty(prop))
+            return true;
+    }
+    return false;
+}
+
 function applyGridFilter(filter, item) {
     if (!filter || !item)
         return false;

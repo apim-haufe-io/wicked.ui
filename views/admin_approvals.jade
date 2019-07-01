@@ -14,10 +14,10 @@ block bodyScripts
             }
           })
             .done(function (data, status) {
-                const sorting = $("#approvalsGrid").jsGrid("getSorting");
-                $ ("#approvalsGrid").jsGrid("loadData").done(function() {
-                $("#approvalsGrid").jsGrid("sort", { field: sorting.field, order: sorting.order })
-              })
+                $("#approvalsGrid").jsGrid("loadData").done(function() {
+                  var sorting = $("#approvalsGrid").jsGrid("getSorting");
+                  $("#approvalsGrid").jsGrid("sort", sorting);
+                })
             })
             .fail(function (xhr, status) {
               alert(`Failed to ${action} subscription`);
