@@ -15,8 +15,8 @@ block bodyScripts
           })
             .done(function (data, status) {
                   $("#approvalsGrid").jsGrid("loadData").done(function() {
-                  var sorting = $("#approvalsGrid").jsGrid("getSorting");
-                  $("#approvalsGrid").jsGrid("sort", sorting);
+                    var sorting = $("#approvalsGrid").jsGrid("getSorting");
+                    $("#approvalsGrid").jsGrid("sort", sorting);
                 })
 
             })
