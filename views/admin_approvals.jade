@@ -13,16 +13,25 @@ block bodyScripts
               api: item.api.id
             }
           })
-            .done(function (data, status) {
-                  $("#approvalsGrid").jsGrid("loadData").done(function() {
-                    var sorting = $("#approvalsGrid").jsGrid("getSorting");
-                    $("#approvalsGrid").jsGrid("sort", sorting);
-                })
+          .done(function (data, status) {
+                $("#approvalsGrid").jsGrid("loadData").done(function() {
+                  const pageIndex = checkOnValidPage($("#approvalsGrid").jsGrid("option", "pageIndex"));
+                  $("#approvalsGrid").jsGrid("option", "pageIndex", pageIndex);
+                  $("#approvalsGrid").jsGrid("sort", $("#approvalsGrid").jsGrid("getSorting"));
+              })
 
-            })
-            .fail(function (xhr, status) {
-              alert(`Failed to ${action} subscription`);
-            });
+          })
+          .fail(function (xhr, status) {
+            alert(`Failed to ${action} subscription`);
+          });
+        }
+        function checkOnValidPage(pageIndex) {
+            const data = $("#approvalsGrid").jsGrid("option", "data")
+            const pageSize = $("#approvalsGrid").jsGrid("option", "pageSize")
+            const maxPages = Math.round(data.length/pageSize);
+            if (pageIndex <= maxPages)
+              return pageIndex;
+            return maxPages;
         }
         $(document).ready(function(){
            $('#approvalsGrid').jsGrid({
