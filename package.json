@@ -28,14 +28,18 @@
     "swagger-ui-dist": "3.18.2",
     "tmp": "0.0.30",
     "wicked-sdk": "file:wicked-sdk.tgz",
-    "write-file-atomic": "1.3.1"
+    "write-file-atomic": "1.3.1",
+    "snyk": "^1.189.0"
   },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "jshintConfig": {
     "node": true,
     "esversion": 6
   },
-  "name": "portal"
+  "name": "portal",
+  "snyk": true
 }
