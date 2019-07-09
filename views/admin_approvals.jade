@@ -13,12 +13,13 @@ block bodyScripts
               api: item.api.id
             }
           }).done(function () {
-              const sorting = $("#approvalsGrid").jsGrid("getSorting");
-              const pageIndex = $("#approvalsGrid").jsGrid("option", "pageIndex");
-              $('#approvalsGrid').jsGrid("deleteItem", item).done(function() {
-                $("#approvalsGrid").jsGrid("sort", sorting);
-                $("#approvalsGrid").jsGrid("openPage", pageIndex);
-              })
+            const $approvalsGrid = $("#approvalsGrid");
+            const sorting = $approvalsGrid.jsGrid("getSorting");
+            const pageIndex = $approvalsGrid.jsGrid("option", "pageIndex");
+            $approvalsGrid.jsGrid("deleteItem", item).done(function() {
+              $approvalsGrid.jsGrid("sort", sorting);
+              $approvalsGrid.jsGrid("openPage", pageIndex);
+            }
           }).fail(function () {
             alert(`Failed to ${action} subscription`);
           });
