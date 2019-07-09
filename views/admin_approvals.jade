@@ -12,52 +12,42 @@ block bodyScripts
               app: item.application.id,
               api: item.api.id
             }
-          })
-          .done(function (data, status) {
-                $("#approvalsGrid").jsGrid("loadData").done(function() {
-                  const pageIndex = checkOnValidPage($("#approvalsGrid").jsGrid("option", "pageIndex"));
-                  $("#approvalsGrid").jsGrid("option", "pageIndex", pageIndex);
-                  $("#approvalsGrid").jsGrid("sort", $("#approvalsGrid").jsGrid("getSorting"));
+          }).done(function () {
+              const sorting = $("#approvalsGrid").jsGrid("getSorting");
+              const pageIndex = $("#approvalsGrid").jsGrid("option", "pageIndex");
+              $('#approvalsGrid').jsGrid("deleteItem", item).done(function() {
+                $("#approvalsGrid").jsGrid("sort", sorting);
+                $("#approvalsGrid").jsGrid("openPage", pageIndex);
               })
-
-          })
-          .fail(function (xhr, status) {
+          }).fail(function () {
             alert(`Failed to ${action} subscription`);
           });
-        }
-        function checkOnValidPage(pageIndex) {
-            const data = $("#approvalsGrid").jsGrid("option", "data")
-            const pageSize = $("#approvalsGrid").jsGrid("option", "pageSize")
-            const maxPages = Math.round(data.length/pageSize);
-            if (pageIndex <= maxPages)
-              return pageIndex;
-            return maxPages;
         }
         $(document).ready(function(){
            $('#approvalsGrid').jsGrid({
              width: "100%", pageSize: 10, sorting: true, paging: true, filtering: true, autoload: true,
              controller: {
                 loadData: function (filter) {
-                    var d = $.Deferred();
-                    $.ajax({
-                      url: "/admin/approvals",
-                      data: filter,
-                      dataType: "json"
-                    }).done(function(result) {
-                      if (isEmptyGridFilter(filter)) {
-                        data = result.approvals
-                      }
-                      else {
-                        data = $.grep(result.approvals, function (item) {
-                          if (applyGridFilter(filter, item))
-                            return item;
-                        });
-                      }
-                      d.resolve(data);
-                    });
-                    return d.promise();
-                }
+                  var d = $.Deferred();
+                  $.ajax({
+                    url: "/admin/approvals",
+                    data: filter,
+                    dataType: "json"
+                  }).done(function(result) {
+                    if (isEmptyGridFilter(filter)) {
+                      data = result.approvals;
+                    } else {
+                      data = $.grep(result.approvals, function (item) {
+                        if (applyGridFilter(filter, item))
+                          return item;
+                      });
+                    }
+                    d.resolve(data);
+                  })
+                  return d.promise();
+              }
             },
+            confirmDeleting: false,
             fields: [
               { name: "user.email", type: "text", title: "User",
                 itemTemplate: function (value, item) {
