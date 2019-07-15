@@ -15,6 +15,7 @@ block content
     if authConfig.authMethods.length > 1
         p Please select the desired method of authentication.
 
+    -var hasProtected = false
     each authMethod in authConfig.authMethods
         //- Protected auth methods will only be displayed if they are passed in as a cookie
         //- to the login page.
@@ -33,3 +34,9 @@ block content
             a(href=authMethod.authUrl class=buttonClass)
                 i(class=faClass)
                 span &nbsp; #{authMethod.friendlyShort}
+        else
+            -hasProtected = true
+    
+    if hasProtected
+        br
+        p For further methods of authentication, e.g. enterprise SSO, please contact the developer portal administrator.
