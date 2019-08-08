@@ -33,6 +33,11 @@ function applyGridFilter(filter, item) {
 }
 
 $(document).ready(function () {
+    jsGrid.loadStrategies.DirectLoadingStrategy.prototype.finishDelete = function (deletedItem, deletedItemIndex) {
+        var grid = this._grid;
+        grid.option("data").splice(deletedItemIndex, 1);
+        grid.refresh();
+    };
     jsGrid.Grid.prototype._sortData = function () { //compensate sorting bug for nested data
         var self = this,
             sortFactor = this._sortFactor(),
