@@ -178,13 +178,14 @@ function configureAuthServer(callback) {
 
         if (!defaultAuthServer.config ||
             !defaultAuthServer.config.api ||
-            !defaultAuthServer.config.api.routes ||
-            !Array.isArray(defaultAuthServer.config.api.routes.paths) ||
-            (defaultAuthServer.config.api.routes.paths.length <= 0)) {
-            throw new Error('The default auth server configuration does not contain a proper config.api');
+            !Array.isArray(defaultAuthServer.config.api.routes) ||
+            !defaultAuthServer.config.api.routes.length ||
+            !Array.isArray(defaultAuthServer.config.api.routes[0].paths) ||
+            (defaultAuthServer.config.api.routes[0].paths.length <= 0)) {
+            return callback(new Error('The auth server configuration does not contain proper config.api'));
         }
 
-        const authServerUri = defaultAuthServer.config.api.routes.paths[0];
+        const authServerUri = defaultAuthServer.config.api.routes[0].paths[0];
         let apiUrl = wicked.getExternalApiUrl();
         if (apiUrl.endsWith('/'))
             apiUrl = apiUrl.substring(0, apiUrl.length - 1);
@@ -270,19 +271,20 @@ function readAuthServers(callback) {
             return callback(new Error('Could not read list of auth servers.'));
         const authServerMap = {};
         async.each(authServerNames, (authServerName, callback) => {
-            wicked.apiGet(`/auth-servers/${authServerName}`, (err, authServerInfo) => {
+            wicked.apiGet(`/auth-servers/${authServerName}`, (err, authServerConfig) => {
                 if (err)
                     return callback(err);
 
                 if (!authServerConfig.config ||
                     !authServerConfig.config.api ||
-                    !authServerConfig.config.api.routes ||
-                    !Array.isArray(authServerConfig.config.api.routes.paths) ||
-                    (authServerConfig.config.api.routes.paths.length <= 0)) {
-                    return callback(new Error('The auth server configuration does not contain proper config.api');
+                    !Array.isArray(authServerConfig.config.api.routes) ||
+                    !authServerConfig.config.api.routes.length ||
+                    !Array.isArray(authServerConfig.config.api.routes[0].paths) ||
+                    (authServerConfig.config.api.routes[0].paths.length <= 0)) {
+                    return callback(new Error('The auth server configuration does not contain proper config.api'));
                 }
 
-                authServerMap[authServerName] = authServerInfo;
+                authServerMap[authServerName] = authServerConfig;
                 return callback(null);
             });
         }, (err) => {
