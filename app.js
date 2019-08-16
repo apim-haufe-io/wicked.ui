@@ -3,6 +3,7 @@
 /* global app, __dirname */
 
 const express = require('express');
+const proxy = require("express-http-proxy");
 const { debug, info, warn, error } = require('portal-env').Logger('portal:app');
 const path = require('path');
 const logger = require('morgan');
@@ -23,8 +24,6 @@ const utils = require('./routes/utils');
 const portalGlobals = require('./portalGlobals');
 const wicked = require('wicked-sdk');
 const correlationIdHandler = wicked.correlationIdHandler();
-
-const clarivate = require('./routes/clarivate');
 
 const fs = require('fs');
 const session = require('express-session');
@@ -168,6 +167,11 @@ app.initialize = function (done) {
     app.get('/', index);
     app.use('/apis', apis);
     app.use('/applications', applications);
+    app.use('/clarivate', proxy(app.portalGlobals.network.clarivateUrl,{
+        proxyReqPathResolver: (req) => {
+            return '/clarivate'+req.url;
+        }
+    }));
 
     app.get('/contact', function (req, res, next) { res.redirect('/content/contact'); });
     app.use('/content', content);
@@ -175,8 +179,6 @@ app.initialize = function (done) {
     app.use('/admin', admin);
     app.use('/swagger-ui', swaggerUi);
     app.use('/swagger-ui', express.static(path.join(__dirname, 'node_modules/swagger-ui-dist')));
-
-    app.use('/clarivate', clarivate);
 
     app.use('/help', help);
     app.use('/kill', kill);
