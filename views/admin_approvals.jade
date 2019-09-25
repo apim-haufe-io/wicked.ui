@@ -49,15 +49,9 @@ block bodyScripts
               },
               { name: "application.name", type: "text", title: "Application",
                 itemTemplate: function(value, item) {
-                  const data_content = item.application.description ? item.application.description : 'No Content';
-                  let $elem = $("<a>").attr({
-                      "href": "/applications/" + item.application.id,
-                      "data-toggle": "popover",
-                      "data-placement": "right",
-                      "data-content": data_content
-                  }).addClass("target").text(value);
-                  $elem.popover({trigger: "manual", animation: false});
-                  setGridMouseOverItem($elem);
+                  const content = item.application.description ? item.application.description : 'No Content';
+                  let $elem = $("<a>").attr({"href": "/applications/" + item.application.id,}).addClass("target").text(value);
+                  setGridMouserOverItemContent($elem, content);
                   return $elem;
                 }
               },
