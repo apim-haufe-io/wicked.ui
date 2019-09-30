@@ -32,7 +32,7 @@ function applyGridFilter(filter, item) {
     return false;
 }
 
-function setGridMouserOverItemContent($elem, content) {
+function setMouseOverElementContent($elem, content) {
   $elem.attr({
     "data-toggle": "popover",
     "data-placement": "right",
