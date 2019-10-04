@@ -49,7 +49,10 @@ block bodyScripts
               },
               { name: "application.name", type: "text", title: "Application",
                 itemTemplate: function(value, item) {
-                  return $("<a>").attr("href", "/applications/"+item.application.id).text(value);
+                  const content = item.application.description ? item.application.description : 'No Content';
+                  let $elem = $("<a>").attr({"href": "/applications/" + item.application.id,}).addClass("target").text(value);
+                  setGridMouserOverItemContent($elem, content);
+                  return $elem;
                 }
               },
               { name: "application.trusted", type: "text", title: "Trusted", width: "4%",
@@ -106,3 +109,7 @@ block content
             p Before approving of "trusted" subscriptions, <a href="/help/trusted" target="_blank">please be aware of the impliciations</a>.
 
             div#approvalsGrid
+
+            br
+            p
+              a(href='/admin/approvals_csv').btn.btn-success Download as CSV

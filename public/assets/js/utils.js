@@ -32,6 +32,28 @@ function applyGridFilter(filter, item) {
     return false;
 }
 
+function setMouseOverElementContent($elem, content) {
+  $elem.attr({
+    "data-toggle": "popover",
+    "data-placement": "right",
+    "data-content": content
+  }).popover({trigger: "manual", animation: false});
+  $elem.on("mouseenter", function () {
+      var _this = this;
+      $(this).popover("show");
+      $(".popover").on("mouseleave", function () {
+          $(_this).popover('hide');
+      });
+  }).on("mouseleave", function () {
+      var _this = this;
+      setTimeout(function () {
+          if (!$(".popover:hover").length) {
+              $(_this).popover("hide");
+          }
+      }, 300);
+  });
+}
+
 $(document).ready(function () {
     jsGrid.loadStrategies.DirectLoadingStrategy.prototype.finishDelete = function (deletedItem, deletedItemIndex) {
         var grid = this._grid;
