@@ -51,7 +51,7 @@ block bodyScripts
                 itemTemplate: function(value, item) {
                   const content = item.application.description ? item.application.description : 'No Content';
                   let $elem = $("<a>").attr({"href": "/applications/" + item.application.id,}).addClass("target").text(value);
-                  setGridMouserOverItemContent($elem, content);
+                  setMouseOverElementContent($elem, content);
                   return $elem;
                 }
               },
