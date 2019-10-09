@@ -98,6 +98,39 @@ router.post('/approvals/decline', function (req, res, next) {
         });
 });
 
+router.get('/approvals_csv', mustBeAdminOrApproverMiddleware, function (req, res, next) {
+  debug('get("/approvals_csv")');
+  utils.getFromAsync(req, res, '/approvals', 200, function (err, apiResponse) {
+    if (err)
+      return next(err);
+    tmp.file(function (err, path, fd, cleanup) {
+      if (err)
+        return next(err);
+      const outStream = fs.createWriteStream(path);
+      outStream.write('User;Application;Description;Trusted;Api;Plan\n');
+      apiResponse.forEach(item => {
+        let trusted = item.application.trusted ? 'Yes' : '-';
+        let description = item.application.description? item.application.description : 'No Description';
+        const approvalsLine = `${item.user.email}; ${item.application.name}; ${description}; ${trusted}; ${item.api.name}; ${item.plan.name}\n`;
+        debug(approvalsLine);
+        outStream.write(approvalsLine);
+      });
+      outStream.end(function (err) {
+        if (err) {
+          cleanup();
+          return next(err);
+        }
+        res.download(path, 'approvals.csv', function (err) {
+          cleanup();
+          if (err) {
+            return next(err);
+          }
+        });
+      });
+    });
+  });
+});
+
 function byName(a, b) {
     return a.name < b.name ? -1 : 1;
 }
