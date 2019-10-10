@@ -3,6 +3,7 @@
 /* global app, __dirname */
 
 const express = require('express');
+const proxy = require("express-http-proxy");
 const { debug, info, warn, error } = require('portal-env').Logger('portal:app');
 const path = require('path');
 const logger = require('morgan');
@@ -166,6 +167,11 @@ app.initialize = function (done) {
     app.get('/', index);
     app.use('/apis', apis);
     app.use('/applications', applications);
+    app.use('/clarivate', proxy(app.portalGlobals.network.clarivateUrl,{
+        proxyReqPathResolver: (req) => {
+            return '/clarivate'+req.url;
+        }
+    }));
 
     app.get('/contact', function (req, res, next) { res.redirect('/content/contact'); });
     app.use('/content', content);

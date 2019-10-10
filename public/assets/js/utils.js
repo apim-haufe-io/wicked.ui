@@ -48,6 +48,7 @@ function dateFormat (date, fstr, utc) {
     });
 }
 
+
 function setMouseOverElementContent($elem, content) {
   $elem.attr({
     "data-toggle": "popover",
