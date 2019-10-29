@@ -16,14 +16,14 @@ doctype html
 html
   head
     title #{glob.title} - #{title}
-    link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/content/wicked.css')
-    link(rel="stylesheet", href="/assets/highlight/css/default.css")
+    link(rel='stylesheet', href='#{glob.network.schema}://#{glob.network.portalHost}/assets/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='#{glob.network.schema}://#{glob.network.portalHost}/content/wicked.css')
+    link(rel="stylesheet", href="#{glob.network.schema}://#{glob.network.portalHost}/assets/highlight/css/default.css")
     link(rel='stylesheet', href='/assets/jsgrid/jsgrid.min.css')
     link(rel='stylesheet', href='/assets/jsgrid/jsgrid-theme.min.css')
     link(rel='stylesheet', href='/assets/css/override.css')
-    script(src='/assets/highlight/highlight.js')
-    
+    block links
+    script(src='/assets/highlight/highlight.js')    
     block scripts
   body
     if authUser && authUser.id == '1'
@@ -41,12 +41,11 @@ html
                         it is no longer possible to log in as this user.
 
                     p Your Todos right now are:
-
                     ul
                         li
-                            a(href='/admin/users') Go to the Admin/Users page, find your own user, and assign an 'admin' group to it
+                            a(href='#{glob.network.schema}://#{glob.network.portalHost}/admin/users') Go to the Admin/Users page, find your own user, and assign an 'admin' group to it
                         li
-                            a(href='/users/1') Open this User's user profile, and delete the password from it
+                            a(href='#{glob.network.schema}://#{glob.network.portalHost}/users/1') Open this User's user profile, and delete the password from it
 
                     p.
                         If you don't have a user in your own name yet, please create that user first, either by signing
@@ -61,46 +60,46 @@ html
                     span.icon-bar
                     span.icon-bar
                     span.icon-bar
-                a.pull-left(href=glob.layouts.defautRootUrl target=glob.layouts.defautRootUrlTarget)
+                a.pull-left(href='#{glob.network.schema}://#{glob.network.portalHost}#{glob.layouts.defautRootUrl}' target=glob.layouts.defautRootUrlTarget)
                     if glob.layouts.defautRootUrlText != null
                         span= glob.layouts.defautRootUrlText
                     else
-                        img(src='/content/images/wicked-40.png' style='margin-top: 5px; margin-right: 5px;' title='wicked project home')
+                        img(src='#{glob.network.schema}://#{glob.network.portalHost}/content/images/wicked-40.png' style='margin-top: 5px; margin-right: 5px;' title='wicked project home')
 
             div(id="navbar", class="collapse navbar-collapse")
                 ul(class="nav navbar-nav")
                     if (route == '/')
                         li.active
-                            a(href="/")= glob.layouts.menu.homeLinkText
+                            a(href="#{glob.network.schema}://#{glob.network.portalHost}/")= glob.layouts.menu.homeLinkText
                     else
                         li
-                            a(href="/")= glob.layouts.menu.homeLinkText
+                            a(href="#{glob.network.schema}://#{glob.network.portalHost}/")= glob.layouts.menu.homeLinkText
                     if route == '/apis'
                         li.active
-                            a(href="/apis") APIs
+                            a(href="#{glob.network.schema}://#{glob.network.portalHost}/apis") APIs
                     else if glob.layouts.menu.apisLinkVisibleToGuest || authUser
                         li
-                            a(href="/apis") APIs
+                            a(href="#{glob.network.schema}://#{glob.network.portalHost}/apis") APIs
                     if route == '/applications'
                         li.active
-                            a(href='/applications') Applications
+                            a(href='#{glob.network.schema}://#{glob.network.portalHost}/applications') Applications
                     else if glob.layouts.menu.applicationsLinkVisibleToGuest || authUser
                         li
-                            a(href='/applications') Applications
+                            a(href='#{glob.network.schema}://#{glob.network.portalHost}/applications') Applications
                     if route == '/content/contact'
                         li.active
-                            a(href="/content/contact") Contact
+                            a(href="#{glob.network.schema}://#{glob.network.portalHost}/content/contact") Contact
                     else if glob.layouts.menu.contactLinkVisibleToGuest || authUser
                         li
-                            a(href="/content/contact") Contact
+                            a(href="#{glob.network.schema}://#{glob.network.portalHost}/content/contact") Contact
                     if route == '/content/toc'
                         li.active
                             a(href="/content/toc") Content
                     else if glob.layouts.menu.contentLinkVisibleToGuest || authUser
                         li
-                            a(href="/content/toc") Content
+                            a(href="#{glob.network.schema}://#{glob.network.portalHost}/content/toc") Content
                 ul(class='nav navbar-nav navbar-#{glob.layouts.menu.classForLoginSignupPosition}')
-                    if !authUser
+                    if !authUser && route !== '/swagger-ui'
                         if route == '/login'
                             li.active
                                 a(href="/login")= glob.layouts.menu.loginLinkText
