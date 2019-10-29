@@ -2,3 +2,10 @@
  * Override library styles
  */
 .jsgrid-cell{word-wrap:break-word}
+
+pre.version {
+    padding: 0;
+    background-color: #7d8492;
+    border-color: #7d8492;
+    color: #fff;
+}
