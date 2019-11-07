@@ -66,6 +66,12 @@ block bodyScripts
                 }
               },
               { name: "plan.name", type: "text", title: "Plan" },
+              { name: "changedDate", type: "text", title: "Date (UTC)",
+                itemTemplate: function (value, item) {
+                  const date = dateFormat (new Date (value), "%Y-%m-%d %H:%M:%S", true);
+                  return $("<span>").text(date);
+                }
+              },
               { type: "actions",  type: "control", width: "100",
                       _createFilterSwitchButton: function() {
                         return this._createOnOffSwitchButton("filtering", this.searchModeButtonClass, false);
