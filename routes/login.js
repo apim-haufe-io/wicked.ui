@@ -44,7 +44,7 @@ router.get('/', function (req, res, next) {
 
     debug(JSON.stringify(authConfig, null, 2));
     for (let authMethod of authConfig.authMethods) {
-        authMethod.authUrl = `${authConfig.authServerUrl}${authMethod.config.authorizeEndpoint}?response_type=code&client_id=${req.app.clientCredentials.clientId}&state=${authMethod.name}-${nonce}&redirect_uri=${qs.escape(utils.CALLBACK_URL)}`;
+        authMethod.authUrl = `${authConfig.authServerUrl}${authMethod.config.authorizeEndpoint}?response_type=code&client_id=${req.app.clientCredentials.clientId}&state=${authMethod.name}!${nonce}&redirect_uri=${qs.escape(utils.CALLBACK_URL)}`;
     }
 
     if (cookieAuthMethod) {
@@ -87,9 +87,9 @@ Error description: ${errorDescription}`, next);
         return utils.fail(400, 'Callback missing code query parameter.', next);
     if (!state)
         return utils.fail(400, 'Callback missing state.', next);
-    if (state.indexOf('-') < 0)
+    if (state.indexOf('!') < 0)
         return utils.fail(400, 'Callback state invalid.', next);
-    const stateList = state.split('-');
+    const stateList = state.split('!');
     if (stateList.length !== 2)
         return utils.fail(400, 'Callback state has an invalid format.', next);
     const authMethodId = stateList[0];
