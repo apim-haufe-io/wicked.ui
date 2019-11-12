@@ -110,7 +110,7 @@ router.get('/approvals_csv', mustBeAdminOrApproverMiddleware, function (req, res
             outStream.write('User;Application;Description;Trusted;Api;Plan\n');
             apiResponse.forEach(item => {
                 let trusted = item.application.trusted ? 'Yes' : '-';
-                let description = item.application.description ? item.application.description : 'No Description';
+                let description = item.application.description? item.application.description : 'No Description';
                 const approvalsLine = `${item.user.email}; ${item.application.name}; ${description}; ${trusted}; ${item.api.name}; ${item.plan.name}\n`;
                 debug(approvalsLine);
                 outStream.write(approvalsLine);
