@@ -8,6 +8,8 @@ const qs = require('querystring');
 const utils = require('./utils');
 const wicked = require('wicked-sdk');
 
+const AUTH_METHOD_COOKIE = 'wicked_auth_method';
+
 /* GET login page. */
 router.get('/', function (req, res, next) {
     debug("get('/')");
@@ -20,6 +22,20 @@ router.get('/', function (req, res, next) {
         req.session.redirectAfterLogin = redirect;
         displayRedirectMessage = true;
     }
+    let cookieAuthMethod;
+    if (req.query.auth_method) {
+        cookieAuthMethod = req.query.auth_method;
+    } else if (req.cookies[AUTH_METHOD_COOKIE]) {
+        cookieAuthMethod = req.cookies[AUTH_METHOD_COOKIE];
+    } // else: No additional auth methods by cookie
+    // Validate the auth method thing
+    if (cookieAuthMethod) {
+        if (!/^[a-zA-Z_\-0-9]+$/.test(cookieAuthMethod)) {
+            warn('An invalid auth_method query parameter or cookie value was detected.');
+            cookieAuthMethod = null;
+        }
+    }
+
     debug(JSON.stringify(req.app.authConfig));
     const nonce = utils.createRandomId();
     req.session.authNonce = nonce;
@@ -28,9 +44,14 @@ router.get('/', function (req, res, next) {
 
     debug(JSON.stringify(authConfig, null, 2));
     for (let authMethod of authConfig.authMethods) {
-        authMethod.authUrl = `${authConfig.authServerUrl}${authMethod.config.authorizeEndpoint}?response_type=code&client_id=${req.app.clientCredentials.clientId}&state=${authMethod.name}-${nonce}&redirect_uri=${qs.escape(utils.CALLBACK_URL)}`;
+        authMethod.authUrl = `${authConfig.authServerUrl}${authMethod.config.authorizeEndpoint}?response_type=code&client_id=${req.app.clientCredentials.clientId}&state=${authMethod.name}!${nonce}&redirect_uri=${qs.escape(utils.CALLBACK_URL)}`;
     }
 
+    if (cookieAuthMethod) {
+        res.cookie(AUTH_METHOD_COOKIE, cookieAuthMethod, { maxAge: 365 * 24 * 60 * 60 * 1000, path: '/login' });
+    } else {
+        res.clearCookie(AUTH_METHOD_COOKIE, { path: '/login' });
+    }
     if (authConfig.authMethods.length === 1) {
         // We only have one auth method, we will do an immediate redirect here
         res.redirect(authConfig.authMethods[0].authUrl);
@@ -40,6 +61,7 @@ router.get('/', function (req, res, next) {
             glob: req.app.portalGlobals,
             route: '/login',
             authConfig: authConfig,
+            cookieAuthMethod,
             displayRedirectMessage: displayRedirectMessage,
         });
     }
@@ -65,9 +87,9 @@ Error description: ${errorDescription}`, next);
         return utils.fail(400, 'Callback missing code query parameter.', next);
     if (!state)
         return utils.fail(400, 'Callback missing state.', next);
-    if (state.indexOf('-') < 0)
+    if (state.indexOf('!') < 0)
         return utils.fail(400, 'Callback state invalid.', next);
-    const stateList = state.split('-');
+    const stateList = state.split('!');
     if (stateList.length !== 2)
         return utils.fail(400, 'Callback state has an invalid format.', next);
     const authMethodId = stateList[0];

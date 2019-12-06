@@ -21,8 +21,8 @@ block bodyScripts
             if (hasredirecturi) {
                 try {
                     var url = new URL(redirecturi);
-                    if (!url.host)
-                        redirectError = 'Redirect URI is a valid URL, but must contain a host. Please check documentation.';
+                    // if (!url.host)
+                    //     redirectError = 'Redirect URI is a valid URL, but must contain a host. Please check documentation.';
                 } catch (ex) {
                     redirectError = 'Redirect URI is not a valid URL. Please check documentation for an explanation.';
                 }

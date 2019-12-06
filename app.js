@@ -87,7 +87,7 @@ app.initialize = function (done) {
     const sessionStore = require('./sessionstore')(app.portalGlobals, session);
     const SECRET = 'ThisIsASecret';
 
-    // Session: 15 minutes
+    // Session: 45 minutes
     const sessionArgs = {
         name: 'portal.cookie.sid',
         store: sessionStore,
@@ -95,7 +95,7 @@ app.initialize = function (done) {
         saveUninitialized: true,
         resave: false,
         cookie: {
-            maxAge: 15 * 60 * 1000
+            maxAge: 45 * 60 * 1000
         }
     };
 
