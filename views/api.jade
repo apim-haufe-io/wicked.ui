@@ -10,6 +10,25 @@ block scripts
                 return confirm("Please confirm once more that you really want to delete all current subscriptions.");
             return false;
         }
+        function downloadClient() {
+            var language = $('#swagger_client_language_select').val();
+            $.get("#{genericSwaggerUrl}", function( data ) {
+                $.ajax({
+                    type: "POST",
+                    url: "https://generator.swagger.io/api/gen/clients/" + language,
+                    data: JSON.stringify( { "spec" : data } ),
+                    contentType: "application/json",
+                    dataType:"json",
+                    success: function(clientDownloadUrlData){
+                        window.location=clientDownloadUrlData.link;
+                    },
+                    error: function(error){
+                        $('#swagger_client_error_span').text("Unable to download the client, check with the portal administrator");
+                        console.log(JSON.stringify(error))
+                    }
+                });
+            });
+        }
 
 block bodyScripts
     script(type='text/javascript').
@@ -134,7 +153,69 @@ block content
                         a(href="#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?apikey=none&url=#{encodeURIComponent(genericSwaggerUrl)}" role="button" target="_blank").btn.btn-default View Swagger definition &raquo;
                     else
                         a(href="#{glob.network.schema}://#{glob.network.apiHost}/swagger-ui/?url=#{encodeURIComponent(genericSwaggerUrl)}" role="button" target="_blank").btn.btn-default View Swagger definition &raquo;
-        
+
+                    p
+                        span Download sample API Client written in &nbsp;
+                        select(id="swagger_client_language_select", name="swagger_client_language_select")
+                            option(value="ada") ada
+                            option(value="akka-scala") akka-scala
+                            option(value="android") android
+                            option(value="apex") apex
+                            option(value="bash") bash
+                            option(value="clojure") clojure
+                            option(value="cpprest") cpprest
+                            option(value="csharp") csharp
+                            option(value="csharp-dotnet2") csharp-dotnet2
+                            option(value="cwiki") cwiki
+                            option(value="dart") dart
+                            option(value="dart-jaguar") dart-jaguar
+                            option(value="dynamic-html") dynamic-html
+                            option(value="eiffel") eiffel
+                            option(value="elixir") elixir
+                            option(value="elm") elm
+                            option(value="erlang-client") erlang-client
+                            option(value="flash") flash
+                            option(value="go") go
+                            option(value="groovy") groovy
+                            option(value="haskell-http-client") haskell-http-client
+                            option(value="html") html
+                            option(value="html2") html2
+                            option(value="java") java
+                            option(value="javascript", selected=true) javascript
+                            option(value="javascript-closure-angular") javascript-closure-angular
+                            option(value="jaxrs-cxf-client") jaxrs-cxf-client
+                            option(value="jmeter") jmeter
+                            option(value="kotlin") kotlin
+                            option(value="lua") lua
+                            option(value="objc") objc
+                            option(value="perl") perl
+                            option(value="php") php
+                            option(value="powershell") powershell
+                            option(value="python") python
+                            option(value="qt5cpp") qt5cpp
+                            option(value="r") r
+                            option(value="ruby") ruby
+                            option(value="rust") rust
+                            option(value="scala") scala
+                            option(value="scala-gatling") scala-gatling
+                            option(value="scalaz") scalaz
+                            option(value="swagger") swagger
+                            option(value="swagger-yaml") swagger-yaml
+                            option(value="swift") swift
+                            option(value="swift3") swift3
+                            option(value="swift4") swift4
+                            option(value="swift5") swift5
+                            option(value="tizen") tizen
+                            option(value="typescript-angular") typescript-angular
+                            option(value="typescript-angularjs") typescript-angularjs
+                            option(value="typescript-aurelia") typescript-aurelia
+                            option(value="typescript-fetch") typescript-fetch
+                            option(value="typescript-inversify") typescript-inversify
+                            option(value="typescript-jquery") typescript-jquery
+                            option(value="typescript-node") typescript-node
+                        a(href="#" role="button" onclick="return downloadClient();").btn.btn-default Download API Client &raquo;
+                        span(id="swagger_client_error_span")
+
         if !authUser && apiInfo.auth != "none"
             .panel.panel-danger
                 .panel-heading
