@@ -14,7 +14,7 @@
     "csurf": "1.9.0",
     "express": "4.16.3",
     "express-session": "1.15.6",
-    "highlight.js": "9.3.0",
+    "highlight.js": "9.18.2",
     "jade": "1.11.0",
     "jquery": "3.4.1",
     "jsgrid": "1.5.3",
